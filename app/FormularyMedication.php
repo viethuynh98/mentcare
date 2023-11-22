@@ -28,6 +28,28 @@ class FormularyMedication_DB_Test
         }
     }
 
+    public function checkDrugExistence($drug_name)
+    {
+        $stmt = $this->db->prepare("SELECT name FROM drug WHERE name = ?");
+        $stmt->execute([$drug_name]);
+        $row = $stmt->fetch(\PDO::FETCH_ASSOC);
+        if ($row) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getDrugSuggestions($input)
+    {
+        $stmt = $this->db->prepare("SELECT name FROM drug WHERE name LIKE :input LIMIT 5");
+        $stmt->execute([':input' => "%$input%"]);
+        $suggestions = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+
+        return $suggestions;
+    }
+
+
     public function formulary_medication($drug_name, $dose, $frequency)
     {
         // Lấy thông tin từ cơ sở dữ liệu
@@ -55,7 +77,7 @@ class FormularyMedication_DB_Test
             // if ($quantity > $stock)
             if ($frequency <= 0) {
                 return "Frequency is too low.";
-            } 
+            }
             if ($frequency > $frequency_max) {
                 return "Frequency is too high.";
             }
@@ -101,7 +123,7 @@ class FormularyMedication
             // if ($quantity > $stock)
             if ($frequency <= 0) {
                 return "Frequency is too low.";
-            } 
+            }
             if ($frequency > $frequency_max_per_day) {
                 return "Frequency is too high.";
             }
@@ -115,5 +137,5 @@ class FormularyMedication
 }
 
 
-$new_object = new FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
+// $new_object = new FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
 // $new_object->db_connection();
