@@ -137,5 +137,5 @@ class FormularyMedication
 }
 
 
-// $new_object = new FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
+$new_object = new FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
 // $new_object->db_connection();
