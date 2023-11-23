@@ -4,40 +4,71 @@ include('FormularyMedication.php');
 // Biến flag để theo dõi trạng thái hiển thị form
 $showDrugNameForm = true;
 $showDetailsForm = false; // Thêm biến để kiểm tra hiển thị form chi tiết
+$showPrescriptionForm = false; // Biến để kiểm tra hiển thị form lưu giá trị tạm thời
+$showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
+$showAnotherDrugBtn = false; // Biến để kiểm tra hiển thị nút "Add Another Drug" và "Done"
 
+// $new_object = new \App\FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
 // Kết quả kiểm tra giá trị thuốc
 $resultMessage = "";
 
+// $prescriptionValues;
+
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  $drug_name = $_POST["drug_name"];
+  if (isset($_POST["add_another_drug"])) {
+    $showDrugNameForm = true;
+    $showAnotherDrugBtn = false;
+  } else
+  if (isset($_POST['add_into_prescription'])) {
+    $add_into_prescription = $_POST['add_into_prescription'];
+    // Lưu giá trị vào mảng tạm thời
+    $prescriptionValues[] = [
+      'drug_name' => $_POST["drug_name"],
+      'unit' => $_POST["unit"],
+      'dose' => $_POST["dose"],
+      'frequency' => $_POST["frequency"],
+      'treatment_days' => $_POST["treatment_days"],
+    ];
 
-  // Tạo đối tượng FormularyMedication_DB_Test
-  $new_object = new \App\FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
-
-  // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
-  if ($new_object->checkDrugExistence($drug_name)) {
-    // Nếu có, ẩn form nhập tên thuốc
     $showDrugNameForm = false;
-    $showDetailsForm = true;
-    if (isset($_POST['unit'])) {
-      // Xử lý khi form chi tiết được gửi đi
-      $unit = $_POST["unit"];
-      $dose = $_POST["dose"];
-      $frequency = $_POST["frequency"];
-      $treatment_days = $_POST["treatment_days"];
+    $showPrescriptionForm = true; // Hiển thị danh sách thuốc
+    $showAnotherDrugBtn = true; // Hiển thị nút "Add Another Drug"
+    $showDetailsForm = false; // Ẩn form chi tiết
+    $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
 
-      // Gọi hàm formulary_medication và lưu kết quả
-      $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency);
+  } else if (isset($_POST['drug_name'])) {
+    $drug_name = $_POST["drug_name"];
+    // Tạo đối tượng FormularyMedication_DB_Test
 
-      // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
+    // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
+    if ($new_object->checkDrugExistence($drug_name)) {
+      // Nếu có, ẩn form nhập tên thuốc
+      $showDrugNameForm = false;
+      $showDetailsForm = true;
+      if (isset($_POST['unit'])) {
+        // Xử lý khi form chi tiết được gửi đi
+        $unit = $_POST["unit"];
+        $dose = $_POST["dose"];
+        $frequency = $_POST["frequency"];
+        $treatment_days = $_POST["treatment_days"];
 
+        // Gọi hàm formulary_medication và lưu kết quả
+        $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency);
+
+        // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
+        if ($resultMessage == "Your prescription is ready") {
+          // Hiển thị nút "Add Into Prescription"
+          $showAddIntoPrescriptionBtn = true;
+        }
+      }
+    } else {
+      // Nếu không, yêu cầu người dùng nhập lại
+      $resultMessage = "<p>Drug not found. Please enter a valid drug name.</p>";
     }
-  } else {
-    // Nếu không, yêu cầu người dùng nhập lại
-    $resultMessage = "<p>Drug not found. Please enter a valid drug name.</p>";
   }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -69,9 +100,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       border-bottom: 1px solid #ddd;
     }
 
-    .suggestion:last-child {
-      border-bottom: none;
-      /* Loại bỏ đường viền dưới của phần tử cuối cùng */
+    #prescription-values {
+      margin-top: 20px;
     }
   </style>
 
@@ -79,43 +109,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
   <script>
-  $(document).ready(function() {
-    var drugNameInput = $("#drug_name");
-    var suggestionsDiv = $("#suggestions");
+    $(document).ready(function() {
+      var drugNameInput = $("#drug_name");
+      var suggestionsDiv = $("#suggestions");
 
-    drugNameInput.on("input", function() {
-      var input = $(this).val();
-      if (input.length >= 1) {
-        $.ajax({
-          type: "POST",
-          url: "getSuggestions.php",
-          data: {
-            input: input
-          },
-          success: function(response) {
-            suggestionsDiv.html(response);
-            adjustSuggestionsWidth(); // Cập nhật chiều rộng của phần gợi ý
-          }
-        });
-      } else {
+      drugNameInput.on("input", function() {
+        var input = $(this).val();
+        // console.log("Input: ", input);
+        if (input.length >= 1) {
+          $.ajax({
+            type: "POST",
+            url: "getSuggestions.php",
+            data: {
+              input: input
+            },
+            success: function(response) {
+              suggestionsDiv.html(response);
+              adjustSuggestionsWidth(); // Cập nhật chiều rộng của phần gợi ý
+            }
+          });
+        } else {
+          suggestionsDiv.html("");
+        }
+      });
+
+      // Xử lý khi chọn gợi ý
+      $(document).on("click", ".suggestion", function() {
+        var selectedDrug = $(this).text();
+        drugNameInput.val(selectedDrug);
         suggestionsDiv.html("");
+      });
+
+      // Hàm để cập nhật chiều rộng của phần gợi ý
+      function adjustSuggestionsWidth() {
+        var drugNameInputWidth = drugNameInput.outerWidth();
+        suggestionsDiv.width(drugNameInputWidth);
       }
-    });
 
-    // Xử lý khi chọn gợi ý
-    $(document).on("click", ".suggestion", function() {
-      var selectedDrug = $(this).text();
-      drugNameInput.val(selectedDrug);
-      suggestionsDiv.html("");
     });
-
-    // Hàm để cập nhật chiều rộng của phần gợi ý
-    function adjustSuggestionsWidth() {
-      var drugNameInputWidth = drugNameInput.outerWidth();
-      suggestionsDiv.width(drugNameInputWidth);
-    }
-  });
-</script>
+  </script>
 </head>
 
 <body>
@@ -126,7 +158,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <label for="drug_name">Drug Name:</label>
       <input type="text" name="drug_name" id="drug_name" autocomplete="off" required>
       <br>
-      <div id="suggestions"></div> 
+      <div id="suggestions"></div>
       <br>
       <input type="submit" value="Check Drug">
     </form>
@@ -137,6 +169,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php echo $resultMessage; ?>
 
     <?php if ($showDetailsForm) : ?>
+      <!-- <form method="post" action=" ./form.php"> -->
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="unit">Unit:</label>
         <input type="text" name="unit" value="<?php echo isset($_POST['unit']) ? $_POST['unit'] : ''; ?>" required><br>
@@ -155,6 +188,51 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
     <?php endif; ?>
   <?php endif; ?>
+
+  <!-- add_into_prescription -->
+  <?php if ($showAddIntoPrescriptionBtn) : ?>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+      <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
+      <input type="hidden" name="unit" value="<?php echo $unit; ?>">
+      <input type="hidden" name="dose" value="<?php echo $dose; ?>">
+      <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
+      <input type="hidden" name="treatment_days" value="<?php echo $treatment_days; ?>">
+      <input type="hidden" name="add_into_prescription" value="add_into_prescription">
+      <input type="submit" value="add_into_prescription">
+    </form>
+  <?php endif; ?>
+
+  <?php if ($showAnotherDrugBtn) : ?>
+    <!-- Nút "Add Another Drug" và "Done" -->
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+      <input type="hidden" name="add_another_drug" value="add_another_drug">
+      <input type="submit" value="add_another_drug"> <br>
+    </form>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+      <input type="hidden" name="Done" value="Done">
+      <input type="submit" value="Done">
+    </form>
+  <?php endif; ?>
+
+  <script>
+    function addAnotherDrug() {
+      // Ẩn nút "Add Into Prescription" và "Add Another Drug" và "Done"
+      $("#add-into-prescription-button, #another-drug-btn, #done-btn").hide();
+
+      // Reset form và hiển thị lại nút "Check Drug"
+      $("#prescription-form")[0].reset();
+      $("#drug_name").removeAttr("readonly");
+      $("#check-drug-btn").show();
+    }
+
+    function donePrescription() {
+      // Hiển thị danh sách thuốc đã chọn
+      $("#prescription-values").show();
+
+      // Ẩn form và nút "Add Another Drug" và "Done"
+      $("#prescription-form, #another-drug-btn, #done-btn").hide();
+    }
+  </script>
 
 </body>
 
