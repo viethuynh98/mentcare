@@ -1,6 +1,7 @@
 <?php
 include('FormularyMedication.php');
 
+session_start();
 // Biến flag để theo dõi trạng thái hiển thị form
 $showDrugNameForm = true;
 $showDetailsForm = false; // Thêm biến để kiểm tra hiển thị form chi tiết
@@ -8,28 +9,46 @@ $showPrescriptionForm = false; // Biến để kiểm tra hiển thị form lưu
 $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
 $showAnotherDrugBtn = false; // Biến để kiểm tra hiển thị nút "Add Another Drug" và "Done"
 
-// $new_object = new \App\FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
-// Kết quả kiểm tra giá trị thuốc
+
 $resultMessage = "";
 
-// $prescriptionValues;
+if (!isset($_SESSION['prescriptionValues'])) {
+  $_SESSION['prescriptionValues'] = [];
+}
+
 
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if (isset($_POST["add_another_drug"])) {
+  if (isset($_POST["Done"])) {
+    session_destroy();
+  } else if (isset($_POST["add_another_drug"])) {
     $showDrugNameForm = true;
     $showAnotherDrugBtn = false;
-  } else
-  if (isset($_POST['add_into_prescription'])) {
+  } else if (isset($_POST['add_into_prescription'])) {
     $add_into_prescription = $_POST['add_into_prescription'];
+
     // Lưu giá trị vào mảng tạm thời
-    $prescriptionValues[] = [
+    $newPrescription = [
       'drug_name' => $_POST["drug_name"],
       'unit' => $_POST["unit"],
       'dose' => $_POST["dose"],
       'frequency' => $_POST["frequency"],
       'treatment_days' => $_POST["treatment_days"],
     ];
+
+    $_SESSION['prescriptionValues'][] = $newPrescription;
+
+    foreach ($_SESSION['prescriptionValues'] as $index => $prescription) {
+      echo "Index: " . $index . "<br>";
+      echo "Drug Name: " . $prescription['drug_name'] . "<br>";
+      echo "Unit: " . $prescription['unit'] . "<br>";
+      echo "Dose: " . $prescription['dose'] . "<br>";
+      echo "Frequency: " . $prescription['frequency'] . "<br>";
+      echo "Treatment Days: " . $prescription['treatment_days'] . "<br>";
+      echo "-------------------------<br>";
+    }
+    // }
+    //-----------------------------------
 
     $showDrugNameForm = false;
     $showPrescriptionForm = true; // Hiển thị danh sách thuốc
@@ -46,9 +65,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       // Nếu có, ẩn form nhập tên thuốc
       $showDrugNameForm = false;
       $showDetailsForm = true;
-      if (isset($_POST['unit'])) {
+
+      //--------------------------------
+      // hien thi chi tiet thuoc de bac si tham khao:
+      $drugDetail = $new_object->getDrugDetails($drug_name);
+      if ($drugDetail) {
+        echo "Detail: TRUE";
+      }
+      foreach ($drugDetail as $row) {
+        $min_dose = $row['min_dose_per_use'];
+        $max_dose = $row['max_dose_per_use'];
+        $frequency_max = $row['frequency_max'];
+        $unit = $row['unit'];
+        $form = $row['form'];
+      }
+      // -------------------------------
+
+      if (isset($_POST['dose'])) {
         // Xử lý khi form chi tiết được gửi đi
-        $unit = $_POST["unit"];
         $dose = $_POST["dose"];
         $frequency = $_POST["frequency"];
         $treatment_days = $_POST["treatment_days"];
@@ -171,13 +205,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php if ($showDetailsForm) : ?>
       <!-- <form method="post" action=" ./form.php"> -->
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <label for="unit">Unit:</label>
-        <input type="text" name="unit" value="<?php echo isset($_POST['unit']) ? $_POST['unit'] : ''; ?>" required><br>
+        <label for="unit">Unit:</label> <?php echo $unit . " mg"; ?> <br>
 
-        <label for="dose">Dose:</label>
+        <label for="dose">Dose:</label> <?php echo "(" . $min_dose . "-" . $max_dose . ") " . $form; ?>
         <input type="number" name="dose" value="<?php echo isset($_POST['dose']) ? $_POST['dose'] : ''; ?>" required><br>
 
-        <label for="frequency">Frequency:</label>
+        <label for="frequency">Frequency:</label> <?php echo "(max = " . $frequency_max . " times a day)" ?>
         <input type="number" name="frequency" value="<?php echo isset($_POST['frequency']) ? $_POST['frequency'] : ''; ?>" required><br>
 
         <label for="treatment_days">Treatment Days:</label>
@@ -197,8 +230,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <input type="hidden" name="dose" value="<?php echo $dose; ?>">
       <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
       <input type="hidden" name="treatment_days" value="<?php echo $treatment_days; ?>">
-      <input type="hidden" name="add_into_prescription" value="add_into_prescription">
-      <input type="submit" value="add_into_prescription">
+      <input type="submit" name="add_into_prescription" value="add_into_prescription">
     </form>
   <?php endif; ?>
 
@@ -213,27 +245,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <input type="submit" value="Done">
     </form>
   <?php endif; ?>
-
-  <script>
-    function addAnotherDrug() {
-      // Ẩn nút "Add Into Prescription" và "Add Another Drug" và "Done"
-      $("#add-into-prescription-button, #another-drug-btn, #done-btn").hide();
-
-      // Reset form và hiển thị lại nút "Check Drug"
-      $("#prescription-form")[0].reset();
-      $("#drug_name").removeAttr("readonly");
-      $("#check-drug-btn").show();
-    }
-
-    function donePrescription() {
-      // Hiển thị danh sách thuốc đã chọn
-      $("#prescription-values").show();
-
-      // Ẩn form và nút "Add Another Drug" và "Done"
-      $("#prescription-form, #another-drug-btn, #done-btn").hide();
-    }
-  </script>
-
 </body>
 
 </html>
