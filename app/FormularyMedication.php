@@ -49,6 +49,14 @@ class FormularyMedication_DB_Test
         return $suggestions;
     }
 
+    public function getDrugDetails($drug_name) {
+        $stmt = $this->db->prepare("SELECT * FROM drug WHERE name LIKE :drug_name");
+        $stmt->execute([':drug_name' => "%$drug_name%"]);
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
 
     public function formulary_medication($drug_name, $dose, $frequency)
     {
