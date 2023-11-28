@@ -59,6 +59,24 @@ class FormularyMedication_DB_Test
         return $result;
     }
 
+    public function getPrescriptionDetails($mh_id) {
+        $stmt = $this->db->prepare("SELECT * FROM prescription_detail JOIN drug on drug.drug_id = prescription_detail.drug_id WHERE prescription_id in (SELECT prescription_id FROM prescription WHERE mh_id = :mh_id)");
+        $stmt->execute([':mh_id' => "$mh_id"]);
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
+
+    public function getPatientRecords($patient_id) {
+        $stmt = $this->db->prepare("SELECT * FROM medicalhistory WHERE patient_id = :patient_id");
+        $stmt->execute([':patient_id' => "$patient_id"]);
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
+
     public function formulary_medication($drug_name, $dose, $frequency)
     {
         // Lấy thông tin từ cơ sở dữ liệu
