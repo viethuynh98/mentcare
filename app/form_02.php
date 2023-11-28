@@ -5,7 +5,6 @@ session_start();
 // Biến flag để theo dõi trạng thái hiển thị form
 $showDrugNameForm = true;
 $showDetailsForm = false; // Thêm biến để kiểm tra hiển thị form chi tiết
-$showPrescriptionForm = false; // Biến để kiểm tra hiển thị form lưu giá trị tạm thời
 $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
 $showAnotherDrugBtn = false; // Biến để kiểm tra hiển thị nút "Add Another Drug" và "Done"
 
@@ -16,90 +15,93 @@ if (!isset($_SESSION['prescriptionValues'])) {
   $_SESSION['prescriptionValues'] = [];
 }
 
-
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+  if (isset($_POST["delete"])) {
+    $indexToDelete = $_POST["index"];
+    // Xoá thành phần thuốc tại $indexToDelete
+    unset($_SESSION['prescriptionValues'][$indexToDelete]);
+    // Đặt lại các chỉ mục mảng để tránh các lỗ hổng
+    $_SESSION['prescriptionValues'] = array_values($_SESSION['prescriptionValues']);
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+  }
   if (isset($_POST["Done"])) {
     session_destroy();
   } else if (isset($_POST["add_another_drug"])) {
     $showDrugNameForm = true;
     $showAnotherDrugBtn = false;
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
   } else if (isset($_POST['add_into_prescription'])) {
-    $add_into_prescription = $_POST['add_into_prescription'];
-
-    // Lưu giá trị vào mảng tạm thời
     $newPrescription = [
       'drug_name' => $_POST["drug_name"],
       'unit' => $_POST["unit"],
       'dose' => $_POST["dose"],
       'frequency' => $_POST["frequency"],
-      'treatment_days' => $_POST["treatment_days"],
+      'quantity' => $_POST["quantity"],
     ];
 
     $_SESSION['prescriptionValues'][] = $newPrescription;
+    //   // Loại thuốc đã tồn tại, thông báo lỗi hoặc xử lý theo ý muốn
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
 
-    foreach ($_SESSION['prescriptionValues'] as $index => $prescription) {
-      echo "Index: " . $index . "<br>";
-      echo "Drug Name: " . $prescription['drug_name'] . "<br>";
-      echo "Unit: " . $prescription['unit'] . "<br>";
-      echo "Dose: " . $prescription['dose'] . "<br>";
-      echo "Frequency: " . $prescription['frequency'] . "<br>";
-      echo "Treatment Days: " . $prescription['treatment_days'] . "<br>";
-      echo "-------------------------<br>";
-    }
-    // }
     //-----------------------------------
 
     $showDrugNameForm = false;
-    $showPrescriptionForm = true; // Hiển thị danh sách thuốc
     $showAnotherDrugBtn = true; // Hiển thị nút "Add Another Drug"
     $showDetailsForm = false; // Ẩn form chi tiết
     $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
 
   } else if (isset($_POST['drug_name'])) {
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     $drug_name = $_POST["drug_name"];
-    // Tạo đối tượng FormularyMedication_DB_Test
 
-    // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
-    if ($new_object->checkDrugExistence($drug_name)) {
-      // Nếu có, ẩn form nhập tên thuốc
-      $showDrugNameForm = false;
-      $showDetailsForm = true;
-
-      //--------------------------------
-      // hien thi chi tiet thuoc de bac si tham khao:
-      $drugDetail = $new_object->getDrugDetails($drug_name);
-      if ($drugDetail) {
-        echo "Detail: TRUE";
+    // Kiểm tra xem loại thuốc đã tồn tại trong đơn thuốc hay chưa
+    $drugNameExists = false;
+    foreach ($_SESSION['prescriptionValues'] as $prescription) {
+      if ($prescription['drug_name'] === $drug_name) {
+        $drugNameExists = true;
+        break;
       }
-      foreach ($drugDetail as $row) {
-        $min_dose = $row['min_dose_per_use'];
-        $max_dose = $row['max_dose_per_use'];
-        $frequency_max = $row['frequency_max'];
-        $unit = $row['unit'];
-        $form = $row['form'];
-      }
-      // -------------------------------
-
-      if (isset($_POST['dose'])) {
-        // Xử lý khi form chi tiết được gửi đi
-        $dose = $_POST["dose"];
-        $frequency = $_POST["frequency"];
-        $treatment_days = $_POST["treatment_days"];
-
-        // Gọi hàm formulary_medication và lưu kết quả
-        $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency);
-
-        // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
-        if ($resultMessage == "Your prescription is ready") {
-          // Hiển thị nút "Add Into Prescription"
-          $showAddIntoPrescriptionBtn = true;
-        }
-      }
-    } else {
-      // Nếu không, yêu cầu người dùng nhập lại
-      $resultMessage = "<p>Drug not found. Please enter a valid drug name.</p>";
     }
+    if ($drugNameExists) {
+      $resultMessage = "Error: Drug already exists in the prescription.";
+    } else // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
+      if ($new_object->checkDrugExistence($drug_name)) {
+        // Nếu có, ẩn form nhập tên thuốc
+        $showDrugNameForm = false;
+        $showDetailsForm = true;
+
+        //--------------------------------
+        // hien thi chi tiet thuoc de bac si tham khao:
+        $drugDetail = $new_object->getDrugDetails($drug_name);
+        foreach ($drugDetail as $row) {
+          $min_dose = $row['min_dose_per_use'];
+          $max_dose = $row['max_dose_per_use'];
+          $frequency_max = $row['frequency_max'];
+          $unit = $row['unit'];
+          $form = $row['form'];
+        }
+        // -------------------------------
+
+        if (isset($_POST['dose'])) {
+          // Xử lý khi form chi tiết được gửi đi
+          $dose = $_POST["dose"];
+          $frequency = $_POST["frequency"];
+          $quantity = $_POST["quantity"];
+
+          // Gọi hàm formulary_medication và lưu kết quả
+          $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency);
+
+          // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
+          if ($resultMessage == "Your prescription is ready") {
+            // Hiển thị nút "Add Into Prescription"
+            $showAddIntoPrescriptionBtn = true;
+          }
+        }
+      } else {
+        // Nếu không, yêu cầu người dùng nhập lại
+        $resultMessage = "<p>Drug not found. Please enter a valid drug name.</p>";
+      }
   }
 }
 
@@ -213,8 +215,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <label for="frequency">Frequency:</label> <?php echo "(max = " . $frequency_max . " times a day)" ?>
         <input type="number" name="frequency" value="<?php echo isset($_POST['frequency']) ? $_POST['frequency'] : ''; ?>" required><br>
 
-        <label for="treatment_days">Treatment Days:</label>
-        <input type="number" name="treatment_days" value="<?php echo isset($_POST['treatment_days']) ? $_POST['treatment_days'] : ''; ?>" required><br>
+        <label for="quantity">Quantity:</label>
+        <input type="number" name="quantity" value="<?php echo isset($_POST['quantity']) ? $_POST['quantity'] : ''; ?>" required><br>
 
         <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
         <input type="submit" value="Submit">
@@ -229,7 +231,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <input type="hidden" name="unit" value="<?php echo $unit; ?>">
       <input type="hidden" name="dose" value="<?php echo $dose; ?>">
       <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
-      <input type="hidden" name="treatment_days" value="<?php echo $treatment_days; ?>">
+      <input type="hidden" name="quantity" value="<?php echo $quantity; ?>">
       <input type="submit" name="add_into_prescription" value="add_into_prescription">
     </form>
   <?php endif; ?>
