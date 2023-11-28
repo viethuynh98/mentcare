@@ -77,6 +77,23 @@ class FormularyMedication_DB_Test
         return $result;
     }
 
+    public static function showPrescriptionDetails($prescriptions)
+    {
+        foreach ($prescriptions as $index => $prescription) {
+            echo "Drug Name: " . $prescription['drug_name'] . "<br>";
+            echo "Unit: " . $prescription['unit'] . "<br>";
+            echo "Dose: " . $prescription['dose'] . "<br>";
+            echo "Frequency: " . $prescription['frequency'] . "<br>";
+            echo "Quantity: " . $prescription['quantity'] . "<br>";
+            echo "-------------------------<br>";
+            echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+            echo '<input type="hidden" name="index" value="' . $index . '">';
+            echo '<input type="submit" name="delete" value="Delete">';
+            echo '</form>';
+            echo "-------------------------<br>";
+        }
+    }
+
     public function formulary_medication($drug_name, $dose, $frequency)
     {
         // Lấy thông tin từ cơ sở dữ liệu
