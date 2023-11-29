@@ -14,7 +14,6 @@ $resultMessage = "";
 if (!isset($_SESSION['prescriptionValues'])) {
   $_SESSION['prescriptionValues'] = [];
 }
-
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if (isset($_POST["delete"])) {
