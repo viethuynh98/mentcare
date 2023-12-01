@@ -79,11 +79,23 @@ class FormularyMedication_DB_Test
         return $result;
     }
 
+    // 
+    public function showPatientRecords()
+    {
+        $stmt = $this->db->prepare("SELECT * FROM medicalhistory");
+        $stmt->execute();
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
+    // 
+
+
     public static function showPrescriptionDetails($prescriptions)
     {
         echo '<table>';
         foreach ($prescriptions as $index => $prescription) {
-            echo '<tr><td colspan="4"><hr></td></tr>';
             echo '<tr>';
             echo "<td>Drug Name: " . $prescription['drug_name'] . "<br>" . "</td>";
             echo "<td>Unit: " . $prescription['unit'] . "<br>" . "</td>";
@@ -97,6 +109,7 @@ class FormularyMedication_DB_Test
             echo '</form>';
             echo '</td>';
             echo '</tr>';
+            echo '<tr><td colspan="6"><hr></td></tr>';
         }
         echo '</table>';
     }
