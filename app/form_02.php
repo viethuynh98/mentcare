@@ -1,27 +1,21 @@
 <?php
 include('FormularyMedication.php');
-
 session_start();
-// Biến flag để theo dõi trạng thái hiển thị form
-$showDrugNameForm = true;
-$showDetailsForm = false; // Thêm biến để kiểm tra hiển thị form chi tiết
-$showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
-$showAnotherDrugBtn = false; // Biến để kiểm tra hiển thị nút "Add Another Drug" và "Done"
-
-
 $resultMessage = "";
 echo "<h1>Prescription</h1>";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
   session_destroy();
   session_start();
+  // Biến flag để theo dõi trạng thái hiển thị form
+  $_SESSION['showDrugNameForm'] = true;
+  $_SESSION['showDetailsForm'] = false;
+  $_SESSION['showAddIntoPrescriptionBtn'] = false;
+  $_SESSION['showAnotherDrugBtn'] = false;
   $_SESSION['prevent_page_load'] = true;
-  echo "asdasdasdsadasd";
+  // echo "asdasdasdsadasd";
   if (isset($_GET["mh_id"])) {
-    // $showAnotherDrugBtn = true;
-    // $showDrugNameForm = false;
     $mh_id = $_GET["mh_id"];
     $prescription_details = $new_object->getPrescriptionDetails($mh_id);
-    // $prescriptionValues = [];
 
     foreach ($prescription_details as $prescription_detail) {
       $newPrescription = [
@@ -37,9 +31,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   }
 }
 if (!isset($_SESSION['prescriptionValues'])) {
+  // Biến flag để theo dõi trạng thái hiển thị form
+  $_SESSION['showDrugNameForm'] = true;
+  $_SESSION['showDetailsForm'] = false;
+  $_SESSION['showAddIntoPrescriptionBtn'] = false;
+  $_SESSION['showAnotherDrugBtn'] = false;
   $_SESSION['prevent_page_load'] = true;
   $_SESSION['prescriptionValues'] = [];
-  echo "fdsfdsfdsfdfdsfdsfdsfd";
+  // echo "fdsfdsfdsfdfdsfdsfdsfd";
 }
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -49,13 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($_SESSION['prescriptionValues'][$indexToDelete]);
     // Đặt lại các chỉ mục mảng để tránh các lỗ hổng
     $_SESSION['prescriptionValues'] = array_values($_SESSION['prescriptionValues']);
+    echo '<div class = "showPrescriptionDetails">';
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    echo '</div>';
   }
   if (isset($_POST["Done"])) {
     session_destroy();
   } else if (isset($_POST["add_another_drug"])) {
-    $showDrugNameForm = true;
-    $showAnotherDrugBtn = false;
+    $_SESSION['showDrugNameForm'] = true;
+    $_SESSION['showAnotherDrugBtn'] = false;
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
   } else if (isset($_POST['add_into_prescription'])) {
     if ($_SESSION['prevent_page_load']) {
@@ -66,22 +67,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         'frequency' => $_POST["frequency"],
         'quantity' => $_POST["quantity"],
       ];
-      echo "dsdsdsdsdsdsdsd";
       $_SESSION['prescriptionValues'][] = $newPrescription;
       $_SESSION['prevent_page_load'] = false;
     }
     //   // Loại thuốc đã tồn tại, thông báo lỗi hoặc xử lý theo ý muốn
-    echo "<div class = 'uruku'>";
+    echo "<div class = 'showPrescriptionDetails'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     echo "</div>";
     //-----------------------------------
 
-    $showDrugNameForm = false;
-    $showAnotherDrugBtn = true; // Hiển thị nút "Add Another Drug"
-    $showDetailsForm = false; // Ẩn form chi tiết
-    $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
-
-
+    $_SESSION['showDrugNameForm'] = false;
+    $_SESSION['showDetailsForm'] = false;
+    $_SESSION['showAddIntoPrescriptionBtn'] = false;
+    $_SESSION['showAnotherDrugBtn'] = true;
   } else if (isset($_POST['drug_name'])) {
     $_SESSION['prevent_page_load'] = true;
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
@@ -100,8 +98,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
       if ($new_object->checkDrugExistence($drug_name)) {
         // Nếu có, ẩn form nhập tên thuốc
-        $showDrugNameForm = false;
-        $showDetailsForm = true;
+        $_SESSION['showDrugNameForm'] = false;
+        $_SESSION['showDetailsForm'] = true;
 
         //--------------------------------
         // hien thi chi tiet thuoc de bac si tham khao:
@@ -127,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
           if ($resultMessage == "<h5>Your prescription is ready</h5>") {
             // Hiển thị nút "Add Into Prescription"
-            $showAddIntoPrescriptionBtn = true;
+            $_SESSION['showAddIntoPrescriptionBtn'] = true;
           }
         }
       } else {
@@ -147,124 +145,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="../CSS/form_02.css">
   <title>Formulary Medication Form</title>
-  <style>
-    #suggestions {
-      max-height: 100px;
-      /* Đặt chiều cao tối đa của danh sách gợi ý */
-      overflow-y: auto;
-      /* Thêm thanh cuộn khi nội dung vượt quá kích thước */
-      position: absolute;
-      width: calc(10% - 20px);
-      /* Đặt chiều rộng phù hợp với phần điền tên thuốc và thêm khoảng trắng 10px */
-      /* margin-top: 5vh;
-      margin-left: 20vh; */
-      /* Thêm khoảng trắng phía trên danh sách gợi ý */
-      background-color: #fff;
-      /* Nền trắng */
-    }
 
-    table,
-    th,
-    td {
-
-      border-collapse: collapse;
-      padding: 2px;
-      /* text-align: center; */
-      margin: auto;
-
-    }
-
-    td {
-      /* color: red; */
-      padding-left: 5vh;
-    }
-
-    table {
-      width: 40vw;
-      float: right;
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
-      border-radius: 20px;
-      margin: 10vh 3vh 3vh 0;
-    }
-
-    #btn {
-      width: 100%;
-      margin-top: 5vh;
-    }
-
-    #btn button {
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-      border-radius: 10px;
-      background-color: lightblue;
-      font-size: 2.5vh;
-    }
-
-    .suggestion {
-      padding: 8px;
-      cursor: pointer;
-      border-bottom: 1px solid #ddd;
-    }
-
-    #prescription-values {
-      margin-top: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      color: blue;
-    }
-
-    h6 {
-      margin-left: 10vh;
-    }
-
-    .okokok {
-      padding: 2vh;
-      width: 55vw;
-      /* border: 2px solid red; */
-      margin-top: 10vh;
-    }
-
-    .okokok h5 {
-      text-align: center;
-      margin-bottom: 3vh;
-    }
-
-    .check_drug {
-      display: flex;
-      margin-left: 20vh;
-      /* border: 2px solid red; */
-    }
-
-    .info_drug {
-      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
-      padding: 5vh;
-      border-radius: 10px;
-    }
-
-    .uruku {
-      margin: 0 auto;
-      width: 40vw;
-    }
-
-    #btn1 {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-    }
-
-    #btn1 button {
-      display: flex;
-      justify-content: center;
-      margin: 0 auto;
-      border-radius: 10px;
-      background-color: lightblue;
-      font-size: 2.5vh;
-    }
-  </style>
 
 
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
@@ -313,8 +196,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
   <!-- Biểu mẫu nhập liệu -->
-  <div class="okokok">
-    <?php if ($showDrugNameForm) : ?>
+  <div class="showDrugNameForm">
+    <?php if ($_SESSION['showDrugNameForm']) : ?>
       <div class="check_drug">
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
           <div class="form-group">
@@ -329,10 +212,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <!-- Hiển thị kết quả và form chi tiết -->
-    <?php if (!empty($resultMessage) || $showDetailsForm) : ?>
+    <?php if (!empty($resultMessage) || $_SESSION['showDetailsForm']) : ?>
       <?php echo $resultMessage; ?>
 
-      <?php if ($showDetailsForm) : ?>
+      <?php if ($_SESSION['showDetailsForm']) : ?>
         <!-- <form method="post" action=" ./form.php"> -->
         <div class="info_drug">
           <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
@@ -377,7 +260,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php endif; ?>
 
     <!-- add_into_prescription -->
-    <?php if ($showAddIntoPrescriptionBtn) : ?>
+    <?php if ($_SESSION['showAddIntoPrescriptionBtn']) : ?>
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
         <input type="hidden" name="unit" value="<?php echo $unit; ?>">
@@ -390,22 +273,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
     <?php endif; ?>
   </div>
-  <?php if ($showAnotherDrugBtn) : ?>
-    <!-- Nút "Add Another Drug" và "Done" -->
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-      <input type="hidden" name="add_another_drug" value="add_another_drug">
-      <!-- <input type="submit" value="add_another_drug"> <br> -->
-      <div id="btn1" class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-default" value="add_another_drug">Add Another Drug</button>
-      </div>
-    </form>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-      <input type="hidden" name="Done" value="Done">
-      <!-- <input type="submit" value="Done"> -->
-      <div id="btn1" class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-default" value="Done">Done</button>
-      </div>
-    </form>
+  <?php if ($_SESSION['showAnotherDrugBtn']) : ?>
+    <div class="form">
+      <!-- Nút "Add Another Drug" và "Done" -->
+      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <input type="hidden" name="add_another_drug" value="add_another_drug">
+        <!-- <input type="submit" value="add_another_drug"> <br> -->
+        <div id="btn1" class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default" value="add_another_drug">Add</button>
+        </div>
+      </form>
+      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <input type="hidden" name="Done" value="Done">
+        <!-- <input type="submit" value="Done"> -->
+        <div id="btn1" class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default" value="Done">Done</button>
+        </div>
+      </form>
+    </div>
   <?php endif; ?>
 </body>
 
