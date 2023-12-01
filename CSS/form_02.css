@@ -1,0 +1,105 @@
+#suggestions {
+    max-height: 100px;
+    overflow-y: auto;
+    position: absolute;
+    width: calc(10% - 20px);
+    background-color: #fff;
+}
+
+td {
+    padding: 2vh 2vh 0 2vh;
+}
+
+table {
+    width: 42vw;
+    float: right;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+    border-radius: 20px;
+    margin: 10vh 3vh 3vh 0;
+}
+
+#btn {
+    width: 100%;
+    margin-top: 5vh;
+}
+
+#btn button {
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: lightblue;
+    font-size: 2.5vh;
+}
+
+.suggestion {
+    padding: 8px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+}
+
+#prescription-values {
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: blue;
+}
+
+h6 {
+    margin-left: 10vh;
+}
+
+.showDrugNameForm {
+    padding: 2vh;
+    width: 55vw;
+    margin-top: 10vh;
+}
+
+.showDrugNameForm h5 {
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+.check_drug {
+    display: flex;
+    margin-left: 20vh;
+}
+
+.info_drug {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+    padding: 5vh;
+    border-radius: 10px;
+}
+
+.showPrescriptionDetails {
+    margin: 0 auto;
+    width: 45vw;
+}
+
+#btn1 {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 5vh;
+}
+
+#btn1 button {
+    width: 15vh;
+    display: flex;
+    justify-content: center;
+    margin: 0 auto;
+    border-radius: 10px;
+    background-color: lightblue;
+    font-size: 2.5vh;
+}
+
+.form {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
