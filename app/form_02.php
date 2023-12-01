@@ -10,9 +10,36 @@ $showAnotherDrugBtn = false; // Biến để kiểm tra hiển thị nút "Add A
 
 
 $resultMessage = "";
+echo "<h1>Prescription</h1>";
+if ($_SERVER["REQUEST_METHOD"] == "GET") {
+  session_destroy();
+  session_start();
+  $_SESSION['prevent_page_load'] = true;
+  echo "asdasdasdsadasd";
+  if (isset($_GET["mh_id"])) {
+    // $showAnotherDrugBtn = true;
+    // $showDrugNameForm = false;
+    $mh_id = $_GET["mh_id"];
+    $prescription_details = $new_object->getPrescriptionDetails($mh_id);
+    // $prescriptionValues = [];
 
+    foreach ($prescription_details as $prescription_detail) {
+      $newPrescription = [
+        'drug_name' => $prescription_detail["name"],
+        'unit' => $prescription_detail["unit"],
+        'dose' => $prescription_detail["dose"],
+        'frequency' => $prescription_detail["frequency"],
+        'quantity' => $prescription_detail["quantity"],
+      ];
+      $_SESSION['prescriptionValues'][] = $newPrescription;
+    }
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+  }
+}
 if (!isset($_SESSION['prescriptionValues'])) {
+  $_SESSION['prevent_page_load'] = true;
   $_SESSION['prescriptionValues'] = [];
+  echo "fdsfdsfdsfdfdsfdsfdsfd";
 }
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -31,18 +58,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $showAnotherDrugBtn = false;
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
   } else if (isset($_POST['add_into_prescription'])) {
-    $newPrescription = [
-      'drug_name' => $_POST["drug_name"],
-      'unit' => $_POST["unit"],
-      'dose' => $_POST["dose"],
-      'frequency' => $_POST["frequency"],
-      'quantity' => $_POST["quantity"],
-    ];
-
-    $_SESSION['prescriptionValues'][] = $newPrescription;
+    if ($_SESSION['prevent_page_load']) {
+      $newPrescription = [
+        'drug_name' => $_POST["drug_name"],
+        'unit' => $_POST["unit"],
+        'dose' => $_POST["dose"],
+        'frequency' => $_POST["frequency"],
+        'quantity' => $_POST["quantity"],
+      ];
+      echo "dsdsdsdsdsdsdsd";
+      $_SESSION['prescriptionValues'][] = $newPrescription;
+      $_SESSION['prevent_page_load'] = false;
+    }
     //   // Loại thuốc đã tồn tại, thông báo lỗi hoặc xử lý theo ý muốn
+    echo "<div class = 'uruku'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
-
+    echo "</div>";
     //-----------------------------------
 
     $showDrugNameForm = false;
@@ -50,7 +81,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $showDetailsForm = false; // Ẩn form chi tiết
     $showAddIntoPrescriptionBtn = false; // Biến để kiểm tra hiển thị nút "Add Into Prescription"
 
+
   } else if (isset($_POST['drug_name'])) {
+    $_SESSION['prevent_page_load'] = true;
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     $drug_name = $_POST["drug_name"];
 
@@ -63,7 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
     }
     if ($drugNameExists) {
-      $resultMessage = "Error: Drug already exists in the prescription.";
+      $resultMessage = "<h6>Error: Drug already exists in the prescription.</h6>";
     } else // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
       if ($new_object->checkDrugExistence($drug_name)) {
         // Nếu có, ẩn form nhập tên thuốc
@@ -92,7 +125,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency);
 
           // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
-          if ($resultMessage == "Your prescription is ready") {
+          if ($resultMessage == "<h5>Your prescription is ready</h5>") {
             // Hiển thị nút "Add Into Prescription"
             $showAddIntoPrescriptionBtn = true;
           }
@@ -112,6 +145,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <title>Formulary Medication Form</title>
   <style>
     #suggestions {
