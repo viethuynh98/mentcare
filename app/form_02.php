@@ -122,11 +122,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       position: absolute;
       width: calc(10% - 20px);
       /* Đặt chiều rộng phù hợp với phần điền tên thuốc và thêm khoảng trắng 10px */
-      margin-top: 5px;
-      margin-left: 85px;
+      /* margin-top: 5vh;
+      margin-left: 20vh; */
       /* Thêm khoảng trắng phía trên danh sách gợi ý */
       background-color: #fff;
       /* Nền trắng */
+    }
+
+    table,
+    th,
+    td {
+
+      border-collapse: collapse;
+      padding: 2px;
+      /* text-align: center; */
+      margin: auto;
+
+    }
+
+    td {
+      /* color: red; */
+      padding-left: 5vh;
+    }
+
+    table {
+      width: 40vw;
+      float: right;
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+      border-radius: 20px;
+      margin: 10vh 3vh 3vh 0;
+    }
+
+    #btn {
+      width: 100%;
+      margin-top: 5vh;
+    }
+
+    #btn button {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      border-radius: 10px;
+      background-color: lightblue;
+      font-size: 2.5vh;
     }
 
     .suggestion {
@@ -137,6 +175,59 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     #prescription-values {
       margin-top: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: blue;
+    }
+
+    h6 {
+      margin-left: 10vh;
+    }
+
+    .okokok {
+      padding: 2vh;
+      width: 55vw;
+      /* border: 2px solid red; */
+      margin-top: 10vh;
+    }
+
+    .okokok h5 {
+      text-align: center;
+      margin-bottom: 3vh;
+    }
+
+    .check_drug {
+      display: flex;
+      margin-left: 20vh;
+      /* border: 2px solid red; */
+    }
+
+    .info_drug {
+      box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+      padding: 5vh;
+      border-radius: 10px;
+    }
+
+    .uruku {
+      margin: 0 auto;
+      width: 40vw;
+    }
+
+    #btn1 {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    #btn1 button {
+      display: flex;
+      justify-content: center;
+      margin: 0 auto;
+      border-radius: 10px;
+      background-color: lightblue;
+      font-size: 2.5vh;
     }
   </style>
 
@@ -186,64 +277,99 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-
   <!-- Biểu mẫu nhập liệu -->
-  <?php if ($showDrugNameForm) : ?>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-      <label for="drug_name">Drug Name:</label>
-      <input type="text" name="drug_name" id="drug_name" autocomplete="off" required>
-      <br>
-      <div id="suggestions"></div>
-      <br>
-      <input type="submit" value="Check Drug">
-    </form>
-  <?php endif; ?>
+  <div class="okokok">
+    <?php if ($showDrugNameForm) : ?>
+      <div class="check_drug">
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+          <div class="form-group">
+            <input type="text" class="form-control" name="drug_name" placeholder="Enter Drug Name" id="drug_name" autocomplete="off" required>
+          </div>
+          <div id="suggestions"></div>
+          <div id="btn" class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default">Check Drug</button>
+          </div>
+        </form>
+      </div>
+    <?php endif; ?>
 
-  <!-- Hiển thị kết quả và form chi tiết -->
-  <?php if (!empty($resultMessage) || $showDetailsForm) : ?>
-    <?php echo $resultMessage; ?>
+    <!-- Hiển thị kết quả và form chi tiết -->
+    <?php if (!empty($resultMessage) || $showDetailsForm) : ?>
+      <?php echo $resultMessage; ?>
 
-    <?php if ($showDetailsForm) : ?>
-      <!-- <form method="post" action=" ./form.php"> -->
+      <?php if ($showDetailsForm) : ?>
+        <!-- <form method="post" action=" ./form.php"> -->
+        <div class="info_drug">
+          <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label class="control-label" for="email">Unit:</label>
+                  <input type="text" id="email" class="form-control" value="<?php echo $unit . " mg"; ?>" name="email" required>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="control-label" for="email">Dose: <?php echo "(" . $min_dose . "-" . $max_dose . ") " . $form; ?></label>
+                  <input type="number" class="form-control" value="<?php echo isset($_POST['dose']) ? $_POST['dose'] : ''; ?>" name="dose" required>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label class="control-label" for="pwd">Frequency: <?php echo "(max = " . $frequency_max . " times a day)" ?></label>
+                  <input type="number" class="form-control" value="<?php echo isset($_POST['frequency']) ? $_POST['frequency'] : ''; ?>" name="frequency" required>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="control-label" for="email">Quantity:</label>
+                  <input type="text" class="form-control" value="<?php echo isset($_POST['quantity']) ? $_POST['quantity'] : ''; ?>" name="quantity" required>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
+            <div class="form-group">
+              <div id="btn" class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-default">Submit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+      <?php endif; ?>
+    <?php endif; ?>
+
+    <!-- add_into_prescription -->
+    <?php if ($showAddIntoPrescriptionBtn) : ?>
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <label for="unit">Unit:</label> <?php echo $unit . " mg"; ?> <br>
-
-        <label for="dose">Dose:</label> <?php echo "(" . $min_dose . "-" . $max_dose . ") " . $form; ?>
-        <input type="number" name="dose" value="<?php echo isset($_POST['dose']) ? $_POST['dose'] : ''; ?>" required><br>
-
-        <label for="frequency">Frequency:</label> <?php echo "(max = " . $frequency_max . " times a day)" ?>
-        <input type="number" name="frequency" value="<?php echo isset($_POST['frequency']) ? $_POST['frequency'] : ''; ?>" required><br>
-
-        <label for="quantity">Quantity:</label>
-        <input type="number" name="quantity" value="<?php echo isset($_POST['quantity']) ? $_POST['quantity'] : ''; ?>" required><br>
-
         <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
-        <input type="submit" value="Submit">
+        <input type="hidden" name="unit" value="<?php echo $unit; ?>">
+        <input type="hidden" name="dose" value="<?php echo $dose; ?>">
+        <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
+        <input type="hidden" name="quantity" value="<?php echo $quantity; ?>">
+        <div id="btn" class="col-sm-offset-2 col-sm-10">
+          <button type="submit" class="btn btn-default" name="add_into_prescription">Add_Into_Prescription</button>
+        </div>
       </form>
     <?php endif; ?>
-  <?php endif; ?>
-
-  <!-- add_into_prescription -->
-  <?php if ($showAddIntoPrescriptionBtn) : ?>
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-      <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
-      <input type="hidden" name="unit" value="<?php echo $unit; ?>">
-      <input type="hidden" name="dose" value="<?php echo $dose; ?>">
-      <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
-      <input type="hidden" name="quantity" value="<?php echo $quantity; ?>">
-      <input type="submit" name="add_into_prescription" value="add_into_prescription">
-    </form>
-  <?php endif; ?>
-
+  </div>
   <?php if ($showAnotherDrugBtn) : ?>
     <!-- Nút "Add Another Drug" và "Done" -->
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
       <input type="hidden" name="add_another_drug" value="add_another_drug">
-      <input type="submit" value="add_another_drug"> <br>
+      <!-- <input type="submit" value="add_another_drug"> <br> -->
+      <div id="btn1" class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default" value="add_another_drug">Add Another Drug</button>
+      </div>
     </form>
     <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
       <input type="hidden" name="Done" value="Done">
-      <input type="submit" value="Done">
+      <!-- <input type="submit" value="Done"> -->
+      <div id="btn1" class="col-sm-offset-2 col-sm-10">
+        <button type="submit" class="btn btn-default" value="Done">Done</button>
+      </div>
     </form>
   <?php endif; ?>
 </body>
