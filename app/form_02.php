@@ -39,7 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
       ];
       $_SESSION['prescriptionValues'][] = $newPrescription;
     }
+    echo "<div class = showPrescriptionDetails2>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    echo "</div>";
   }
 }
 if (!isset($_SESSION['prescriptionValues']) && !isset($_POST["Diagnose"])) {
@@ -68,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($_SESSION['prescriptionValues'][$indexToDelete]);
     // Đặt lại các chỉ mục mảng để tránh các lỗ hổng
     $_SESSION['prescriptionValues'] = array_values($_SESSION['prescriptionValues']);
-    echo '<div class = "showPrescriptionDetails">';
+    echo '<div class = "showPrescriptionDetails3">';
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     echo '</div>';
   }
@@ -84,7 +86,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   } else if (isset($_POST["add_another_drug"])) {
     $_SESSION['showDrugNameForm'] = true;
     $_SESSION['showAnotherDrugBtn'] = false;
+    echo "<div class = 'showPrescriptionDetails3'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    echo "</div>";
   } else if (isset($_POST['add_into_prescription'])) {
     if ($_SESSION['prevent_page_load']) {
       $note = '';
@@ -110,18 +114,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $_SESSION['prescriptionValues'][] = $newPrescription;
       $_SESSION['prevent_page_load'] = false;
     }
-    echo "<div class = 'showPrescriptionDetails'>";
-    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
-    echo "</div>";
-    //-----------------------------------
-
     $_SESSION['showDrugNameForm'] = false;
     $_SESSION['showDetailsForm'] = false;
     $_SESSION['showAddIntoPrescriptionBtn'] = false;
     $_SESSION['showAnotherDrugBtn'] = true;
+    echo "<div class = 'showPrescriptionDetails1'>";
+    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    if ($_SESSION['showAnotherDrugBtn']) {
+      echo '<div class="form">';
+      // Nút "Add Another Drug" và "Done"
+      echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+      echo '<input type="hidden" name="add_another_drug" value="add_another_drug">';
+      echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
+      echo '<button type="submit" class="btn btn-default" value="add_another_drug">Add</button>';
+      echo '</div>';
+      echo '</form>';
+
+      echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+      echo '<input type="hidden" name="Done" value="Done">';
+      echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
+      echo '<button type="submit" class="btn btn-default" value="Done">Done</button>';
+      echo '</div>';
+      echo '</form>';
+
+      echo '</div>';
+    }
+    echo "</div>";
+    //-----------------------------------
+
+
   } else if (isset($_POST['drug_name'])) {
     $_SESSION['prevent_page_load'] = true;
+    echo "<div class = 'showPrescriptionDetails'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    echo "</div>";
     $drug_name = $_POST["drug_name"];
 
     // Kiểm tra xem loại thuốc đã tồn tại trong đơn thuốc hay chưa
@@ -331,25 +357,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
     <?php endif; ?>
   </div>
-  <?php if ($_SESSION['showAnotherDrugBtn']) : ?>
-    <div class="form">
-      <!-- Nút "Add Another Drug" và "Done" -->
-      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <input type="hidden" name="add_another_drug" value="add_another_drug">
-        <!-- <input type="submit" value="add_another_drug"> <br> -->
-        <div id="btn1" class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default" value="add_another_drug">Add</button>
-        </div>
-      </form>
-      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <input type="hidden" name="Done" value="Done">
-        <!-- <input type="submit" value="Done"> -->
-        <div id="btn1" class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default" value="Done">Done</button>
-        </div>
-      </form>
-    </div>
-  <?php endif; ?>
+
   <?php if ($_SESSION['show_notes']) : ?>
     <div class="form">
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
