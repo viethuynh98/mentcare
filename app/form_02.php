@@ -109,13 +109,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $note = '';
       switch ($_POST["frequency"]) {
         case 1:
-          $note = "Sáng " . $_POST["dose"] . " viên, " . $_POST["drug_note"];
+          $note = "take " . $_POST["dose"] . " each time, once daily, " . $_POST["drug_note"];
           break;
         case 2:
-          $note = "Sáng " . $_POST["dose"] . " viên, " . "Chiều " . $_POST["dose"] . " viên, " . $_POST["drug_note"];
+          $note = "take " . $_POST["dose"] . " each time, twice a day, " . $_POST["drug_note"];
           break;
         case 3:
-          $note = "Sáng " . $_POST["dose"] . " viên, " . "Trưa " . $_POST["dose"] . " viên, " . "Chiều " . $_POST["dose"] . " viên, " . $_POST["drug_note"];
+          $note = "take " . $_POST["dose"] . " each time, 3 times a day, " . $_POST["drug_note"];
       }
       $newPrescription = [
         'drug_name' => $_POST["drug_name"],
