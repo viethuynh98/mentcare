@@ -115,7 +115,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             echo "Note: " . $prescription_detail['note'] . "<br>";
             echo "<hr>";
         }
-        echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&mh_id=' . $record["mh_id"] . '&doctor_id=' . $doctor_id . '">Reissue Prescription</a></button>';
+        echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&mh_id=' . $mh_id . '&doctor_id=' . $doctor_id . '">Reissue Prescription</a></button>';
         echo '</div>';
     }
 
