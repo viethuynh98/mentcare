@@ -1,0 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins';
+}
+
+body {
+    background-image: url(../Image/background/anh4.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.title h2 {
+    text-align: center;
+    margin-top: 2%;
+
+}
+
+.home {
+    display: flex;
+    margin-top: 5%;
+    /* border: 2px solid red; */
+
+}
+
+.home_background img {
+    width: 60%;
+    /* height: 50vh; */
+    margin-right: 10vh;
+    float: right;
+    /* border: 2px solid blue; */
+}
+
+
+.home_book {
+    width: 60%;
+    height: auto;
+    margin-right: 5%;
+    z-index: 3;
+    /* border: 2px solid yellow; */
+}
+
+.home_book div img {
+    width: 30%;
+    padding: 2%;
+    box-shadow: 3px 3px 3px 3px rgb(174, 185, 188);
+}
+
+.home_img_book {
+    display: flex;
+    justify-content: space-evenly;
+    margin-bottom: 10vh;
+}
