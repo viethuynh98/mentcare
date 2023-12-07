@@ -70,9 +70,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     unset($_SESSION['prescriptionValues'][$indexToDelete]);
     // Đặt lại các chỉ mục mảng để tránh các lỗ hổng
     $_SESSION['prescriptionValues'] = array_values($_SESSION['prescriptionValues']);
-    echo '<div class = "showPrescriptionDetails3">';
-    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
-    echo '</div>';
+    if (!$_SESSION['prescriptionValues'] && !$_SESSION['showDetailsForm']) {
+      $_SESSION['showDrugNameForm'] = true;
+    } else {
+      echo "<div class = 'showPrescriptionDetails1'>";
+      $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+      if ($_SESSION['showAnotherDrugBtn']) {
+        echo '<div class="form">';
+        // Nút "Add Another Drug" và "Done"
+        echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+        echo '<input type="hidden" name="add_another_drug" value="add_another_drug">';
+        echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
+        echo '<button type="submit" class="btn btn-default" value="add_another_drug">Add</button>';
+        echo '</div>';
+        echo '</form>';
+
+        echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
+        echo '<input type="hidden" name="Done" value="Done">';
+        echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
+        echo '<button type="submit" class="btn btn-default" value="Done">Done</button>';
+        echo '</div>';
+        echo '</form>';
+
+        echo '</div>';
+      }
+      echo "</div>";
+    }
   }
   if ($_SESSION['show_notes']) {
     $_SESSION['note'] = $_POST['note'];
@@ -84,6 +107,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['show_notes'] = true;
     // session_destroy();
   } else if (isset($_POST["add_another_drug"])) {
+    echo "3";
     $_SESSION['showDrugNameForm'] = true;
     $_SESSION['showAnotherDrugBtn'] = false;
     echo "<div class = 'showPrescriptionDetails3'>";
@@ -142,18 +166,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "</div>";
     //-----------------------------------
 
-
   } else if (isset($_POST['drug_name'])) {
     $_SESSION['prevent_page_load'] = true;
     echo "<div class = 'showPrescriptionDetails'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     echo "</div>";
-    $drug_name = $_POST["drug_name"];
-
+    $_SESSION['$drug_name'] = $_POST["drug_name"];
+    $drug_name = $_SESSION['$drug_name'];
     // Kiểm tra xem loại thuốc đã tồn tại trong đơn thuốc hay chưa
     $drugNameExists = false;
     foreach ($_SESSION['prescriptionValues'] as $prescription) {
-      if ($prescription['drug_name'] === $drug_name) {
+      if ($prescription['drug_name'] ===$_SESSION['$drug_name']) {
         $drugNameExists = true;
         break;
       }
@@ -169,14 +192,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         //--------------------------------
         // hien thi chi tiet thuoc de bac si tham khao:
         $drugDetail = $new_object->getDrugDetails($drug_name);
+        // echo "asdfasdffffffffffffffffffffffffffffffffff";
         foreach ($drugDetail as $row) {
-          $min_dose = $row['min_dose_per_use'];
-          $max_dose = $row['max_dose_per_use'];
-          $frequency_max = $row['frequency_max'];
-          $unit = $row['unit'];
-          $form = $row['form'];
-          $drug_id = $row['drug_id'];
-          $drug_note = $row['dosing_guide'];
+          $_SESSION['min_dose'] = $row['min_dose_per_use'];
+          $_SESSION['max_dose'] = $row['max_dose_per_use'];
+          $_SESSION['frequency_max'] = $row['frequency_max'];
+          $_SESSION['unit'] = $row['unit'];
+          $_SESSION['form'] = $row['form'];
+          $_SESSION['drug_id'] = $row['drug_id'];
+          $_SESSION['drug_note'] = $row['dosing_guide'];
         }
         // -------------------------------
 
@@ -305,12 +329,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <div class="col">
                 <div class="form-group">
                   <label class="control-label" for="email">Unit:</label>
-                  <input type="text" id="email" class="form-control" value="<?php echo $unit . " mg"; ?>" name="email" required>
+                  <input type="text" id="email" class="form-control" value="<?php echo $_SESSION['unit'] . " mg"; ?>" name="email" required>
                 </div>
               </div>
               <div class="col">
                 <div class="form-group">
-                  <label class="control-label" for="email">Dose: <?php echo "(" . $min_dose . "-" . $max_dose . ") " . $form; ?></label>
+                  <label class="control-label" for="email">Dose: <?php echo "(" . $_SESSION['min_dose'] . "-" . $_SESSION['max_dose'] . ") " . $_SESSION['form']; ?></label>
                   <input type="number" class="form-control" value="<?php echo isset($_POST['dose']) ? $_POST['dose'] : ''; ?>" name="dose" required>
                 </div>
               </div>
@@ -318,7 +342,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="row">
               <div class="col">
                 <div class="form-group">
-                  <label class="control-label" for="pwd">Frequency: <?php echo "(max = " . $frequency_max . " times a day)" ?></label>
+                  <label class="control-label" for="pwd">Frequency: <?php echo "(max = " . $_SESSION['frequency_max'] . " times a day)" ?></label>
                   <input type="number" class="form-control" value="<?php echo isset($_POST['frequency']) ? $_POST['frequency'] : ''; ?>" name="frequency" required>
                 </div>
               </div>
@@ -329,10 +353,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>
               </div>
             </div>
-            <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
+            <input type="hidden" name="drug_name" value="<?php echo $_SESSION['$drug_name']; ?>">
             <div class="form-group">
               <div id="btn" class="col-sm-offset-2 col-sm-10">
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default">Check</button>
               </div>
             </div>
           </form>
@@ -341,16 +365,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <?php endif; ?>
     <?php endif; ?>
 
-    <!-- add_into_prescription -->
     <?php if ($_SESSION['showAddIntoPrescriptionBtn']) : ?>
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <input type="hidden" name="drug_name" value="<?php echo $drug_name; ?>">
-        <input type="hidden" name="unit" value="<?php echo $unit; ?>">
+        <input type="hidden" name="unit" value="<?php echo $_SESSION['unit']; ?>">
         <input type="hidden" name="dose" value="<?php echo $dose; ?>">
         <input type="hidden" name="frequency" value="<?php echo $frequency; ?>">
         <input type="hidden" name="quantity" value="<?php echo $quantity; ?>">
-        <input type="hidden" name="drug_id" value="<?php echo $drug_id; ?>">
-        <input type="hidden" name="drug_note" value="<?php echo $drug_note; ?>">
+        <input type="hidden" name="drug_id" value="<?php echo $_SESSION['drug_id']; ?>">
+        <input type="hidden" name="drug_note" value="<?php echo $_SESSION['drug_note']; ?>">
         <div id="btn" class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-default" name="add_into_prescription">Add_Into_Prescription</button>
         </div>
