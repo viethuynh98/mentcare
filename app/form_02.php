@@ -81,19 +81,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         echo '<div class="form">';
         // Nút "Add Another Drug" và "Done"
         echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
-        echo '<input type="hidden" name="add_another_drug" value="add_another_drug">';
-        echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
-        echo '<button type="submit" class="btn btn-default" value="add_another_drug">Add</button>';
-        echo '</div>';
-        echo '</form>';
-
-        echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
         echo '<input type="hidden" name="Done" value="Done">';
         echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
         echo '<button type="submit" class="btn btn-default" value="Done">Done</button>';
         echo '</div>';
         echo '</form>';
-
         echo '</div>';
       }
       echo "</div>";
@@ -106,19 +98,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     Helper::redirect(Helper::get_url('../mentcare/app/showRecords.php'));
   }
   if (isset($_POST["Done"])) {
+    $_SESSION['showDrugNameForm'] = false;
     $_SESSION['show_notes'] = true;
     echo "<div class = 'showPrescriptionDetails2 ' >";
     $new_object->showPrescriptionDetails_02($_SESSION['prescriptionValues']);
     echo "</div>";
     // session_destroy();
-  } else if (isset($_POST["add_another_drug"])) {
-    echo "3";
-    $_SESSION['showDrugNameForm'] = true;
-    $_SESSION['showAnotherDrugBtn'] = false;
-    echo "<div class = 'showPrescriptionDetails2'>";
-
-    $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
-    echo "</div>";
   } else if (isset($_POST['add_into_prescription'])) {
     if ($_SESSION['prevent_page_load']) {
       $note = '';
@@ -144,7 +129,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $_SESSION['prescriptionValues'][] = $newPrescription;
       $_SESSION['prevent_page_load'] = false;
     }
-    $_SESSION['showDrugNameForm'] = false;
+    $_SESSION['showDrugNameForm'] = true;
     $_SESSION['showDetailsForm'] = false;
     $_SESSION['showAddIntoPrescriptionBtn'] = false;
     $_SESSION['showAnotherDrugBtn'] = true;
@@ -156,24 +141,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       echo '<div class="form">';
       // Nút "Add Another Drug" và "Done"
       echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
-      echo '<input type="hidden" name="add_another_drug" value="add_another_drug">';
-      echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
-      echo '<button type="submit" class="btn btn-default" value="add_another_drug">Add</button>';
-      echo '</div>';
-      echo '</form>';
-
-      echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
       echo '<input type="hidden" name="Done" value="Done">';
       echo '<div id="btn1" class="col-sm-offset-2 col-sm-10">';
       echo '<button type="submit" class="btn btn-default" value="Done">Done</button>';
       echo '</div>';
       echo '</form>';
-
       echo '</div>';
     }
     echo "</div>";
-    //-----------------------------------
-
   } else if (isset($_POST['drug_name'])) {
     $_SESSION['prevent_page_load'] = true;
     echo "<div class = 'showPrescriptionDetails2'>";
@@ -181,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "</div>";
     $_SESSION['$drug_name'] = $_POST["drug_name"];
     $drug_name = $_SESSION['$drug_name'];
-    // Kiểm tra xem loại thuốc đã tồn tại trong đơn thuốc hay chưa
+
     $drugNameExists = false;
     foreach ($_SESSION['prescriptionValues'] as $prescription) {
       if ($prescription['drug_name'] === $_SESSION['$drug_name']) {
@@ -196,8 +171,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Nếu có, ẩn form nhập tên thuốc
         $_SESSION['showDrugNameForm'] = false;
         $_SESSION['showDetailsForm'] = true;
-
-        //--------------------------------
         // hien thi chi tiet thuoc de bac si tham khao:
         $drugDetail = $new_object->getDrugDetails($drug_name);
         // echo "asdfasdffffffffffffffffffffffffffffffffff";
@@ -210,17 +183,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           $_SESSION['drug_id'] = $row['drug_id'];
           $_SESSION['drug_note'] = $row['dosing_guide'];
         }
-        // -------------------------------
-
         if (isset($_POST['dose'])) {
-          // Xử lý khi form chi tiết được gửi đi
           $dose = $_POST["dose"];
           $frequency = $_POST["frequency"];
           $quantity = $_POST["quantity"];
-
           // Gọi hàm formulary_medication và lưu kết quả
           $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency, $quantity);
-
           // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
           if ($resultMessage == "<h5>Your prescription is ready</h5>") {
             // Hiển thị nút "Add Into Prescription"
@@ -229,7 +197,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
       } else {
         // Nếu không, yêu cầu người dùng nhập lại
-        $resultMessage = "<p>Drug not found. Please enter a valid drug name.</p>";
+        $resultMessage = "<h6>Drug not found. Please enter a valid drug name.</h6>";
       }
   }
 }
