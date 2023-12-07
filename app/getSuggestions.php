@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   $input = $_POST["input"];
 
   // Tạo đối tượng FormularyMedication_DB_Test
-  $new_object = new \App\FormularyMedication_DB_Test('localhost', 'root', '', 'mentcare_db');
+  $new_object = new \App\FormularyMedication('localhost', 'root', '', 'mentcare_db');
 
   // Lấy danh sách gợi ý từ cơ sở dữ liệu
   $suggestions = $new_object->getDrugSuggestions($input);

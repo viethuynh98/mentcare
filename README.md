@@ -18,3 +18,11 @@
 # mở browser, nhập dòng mã sau: http://localhost:8282/phpmyadmin/
 # sau đó tạo cơ sở dữ liệu mới có tên mentcare_db
 # import file cơ sở dữ liệu từ folder database trong source code
+# lưu folder source code vào thư mục với đường dẫn sau: C:\xampp\htdocs
+# sau khi lưu file, chạy 
+
+# cài đặt chạy unittest với phpunit:
+# mở cửa sổ terminal, chạy lệnh:
+# composer require --dev phpunit/phpunit ^10
+# composer dump-autoload
+# ./vendor/bin/phpunit
