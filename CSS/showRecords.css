@@ -27,7 +27,7 @@ h1 {
 
 .record {
     width: 45vw;
-    margin-top: 15vh;
+    margin: 10vh 0 0 2vh;
 }
 
 .record table {
@@ -106,10 +106,8 @@ h4 {
 }
 
 .form {
-    position: absolute;
-    top: 12vh;
-    left: 7vh;
     width: 30vw;
+    margin: 7vh 0 0 20vh;
 }
 
 .form input {
