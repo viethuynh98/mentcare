@@ -138,6 +138,26 @@ class FormularyMedication_DB_Test
         echo '</table>';
     }
 
+    public static function showPrescriptionDetails_02($prescriptions)
+    {
+        echo '<table>';
+        echo '<th>Drug Name</th>';
+        echo '<th>Unit</th>';
+        echo '<th>Dose</th>';
+        echo '<th>Frequency</th>';
+        echo '<th>Quantity</th>';
+        foreach ($prescriptions as $index => $prescription) {
+            echo '<tr>';
+            echo '<td>' . $prescription['drug_name'] . '</td>';
+            echo '<td>' . $prescription['unit'] . '</td>';
+            echo '<td>' . $prescription['dose'] . '</td>';
+            echo '<td>' . $prescription['frequency'] . '</td>';
+            echo '<td>' . $prescription['quantity'] . '</td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+    }
+
     public function insert_into_db($pt_id, $dr_id, $diagnose, $treatment, $note, $prescriptions)
     {
         $currentDate = date("Y-m-d H:i:s");

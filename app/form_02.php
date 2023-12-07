@@ -107,6 +107,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   }
   if (isset($_POST["Done"])) {
     $_SESSION['show_notes'] = true;
+    echo "<div class = 'showPrescriptionDetails2 ' >";
+    $new_object->showPrescriptionDetails_02($_SESSION['prescriptionValues']);
+    echo "</div>";
     // session_destroy();
   } else if (isset($_POST["add_another_drug"])) {
     echo "3";
@@ -384,20 +387,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
       </form>
     <?php endif; ?>
-  </div>
-
-  <?php if ($_SESSION['show_notes']) : ?>
-    <div class="form">
-      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-        <textarea name="note" id="" cols="30" rows="5"></textarea>
-        <div id="btn1" class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default" value="print">Print</button>
-        </div>
-      </form>
-    </div>
-  <?php endif; ?>
-  <?php if ($_SESSION['show_diagnose']) : ?>
-    <div class="form">
+    <?php if ($_SESSION['show_notes']) : ?>
+      <div class="note">
+        <h4>Note for Patient</h4>
+        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+          <textarea name="note" id="" style="width:100vh; height:6vh;"></textarea>
+          <div id="btn1" class="col-sm-offset-2 col-sm-10">
+            <button type="submit" class="btn btn-default" value="print">Print</button>
+          </div>
+        </form>
+      </div>
+    <?php endif; ?>
+    <?php if ($_SESSION['show_diagnose']) : ?>
+      <!-- <div class="showDrugNameForm"> -->
       <!-- Nút "Add Another Drug" và "Done" -->
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="row">
@@ -421,8 +423,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
           </div>
         </div>
       </form>
-    </div>
-  <?php endif; ?>
+  </div>
+<?php endif; ?>
+<!-- </div> -->
+
+
 </body>
 
 </html>

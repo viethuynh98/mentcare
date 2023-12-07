@@ -89,7 +89,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     echo '</tr>';
                 }
                 echo '</table>';
-                echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&&doctor_id=' . $doctor_id . '">New Prescription</a></button>';
+                echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&doctor_id=' . $doctor_id . '">New Prescription</a></button>';
                 echo '</div>';
             } else {
                 echo "No records found for the patient.";
@@ -126,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
         }
         echo '</table>';
         echo "</div>";
-        echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&mh_id=' . $record["mh_id"] . '&doctor_id=' . $doctor_id . '">Reissue Prescription</a></button>';
+        echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&mh_id=' . $mh_id . '&doctor_id=' . $doctor_id . '">Reissue Prescription</a></button>';
         echo '</div>';
     }
 
