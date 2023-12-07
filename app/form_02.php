@@ -110,7 +110,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo "3";
     $_SESSION['showDrugNameForm'] = true;
     $_SESSION['showAnotherDrugBtn'] = false;
-    echo "<div class = 'showPrescriptionDetails3'>";
+    echo "<div class = 'showPrescriptionDetails2'>";
+
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     echo "</div>";
   } else if (isset($_POST['add_into_prescription'])) {
@@ -142,8 +143,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $_SESSION['showDetailsForm'] = false;
     $_SESSION['showAddIntoPrescriptionBtn'] = false;
     $_SESSION['showAnotherDrugBtn'] = true;
-    echo "<div class = 'showPrescriptionDetails1'>";
+    echo "<div class = 'showPrescriptionDetails'>";
+    echo "<div class = 'show_table_infor'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
+    echo "</div>";
     if ($_SESSION['showAnotherDrugBtn']) {
       echo '<div class="form">';
       // Nút "Add Another Drug" và "Done"
@@ -168,7 +171,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   } else if (isset($_POST['drug_name'])) {
     $_SESSION['prevent_page_load'] = true;
-    echo "<div class = 'showPrescriptionDetails'>";
+    echo "<div class = 'showPrescriptionDetails1'>";
     $new_object->showPrescriptionDetails($_SESSION['prescriptionValues']);
     echo "</div>";
     $_SESSION['$drug_name'] = $_POST["drug_name"];

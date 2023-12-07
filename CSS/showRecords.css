@@ -1,6 +1,8 @@
 table,
 th,
 td {
+    border: 1px solid black;
+    border-radius: 20px;
     border-collapse: collapse;
     padding: 5px;
     text-align: center;
@@ -9,10 +11,7 @@ td {
 
 table {
     border-radius: 10px;
-}
-
-tr:nth-child(even) {
-    background-color: #dfe6ea;
+    overflow: hidden;
 }
 
 h1 {
@@ -27,7 +26,7 @@ h1 {
 
 .record {
     width: 45vw;
-    margin: 10vh 0 0 2vh;
+    margin: 10vh 0 5vh 2vh;
 }
 
 .record table {
@@ -38,8 +37,7 @@ h1 {
     margin-bottom: 4vh;
 }
 
-.record h2,
-h4 {
+.record h4 {
     text-align: center;
 }
 
@@ -50,6 +48,18 @@ h4 {
     width: 20vh;
     padding: 1.5vh 0;
 
+}
+
+#btn a {
+    color: #50d8af;
+    text-decoration: underline;
+}
+
+#btn {
+
+    font-weight: 400;
+    width: 20vh;
+    padding: 1.5vh 0;
 }
 
 
@@ -72,11 +82,12 @@ h4 {
     width: 45vw;
     margin: auto;
     float: right;
-    margin-top: 15vh;
+    margin-top: -3vh;
+    /* border: 2px solid red; */
 }
 
 .detail h2 {
-    margin-bottom: 9vh;
+    margin-bottom: 5vh;
     text-align: center;
 }
 
@@ -89,6 +100,18 @@ h4 {
     font-size: 2.3vh;
     border: none;
 }
+
+.ok {
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+    border-radius: 15px;
+    margin-bottom: 4vh;
+}
+
+.ok table {
+    width: 100%;
+
+}
+
 
 .detail button:hover {
     outline: none;
@@ -103,6 +126,11 @@ h4 {
     padding: 1.5vh 0;
 
 
+}
+
+h2 {
+    text-align: center;
+    margin-top: 2vh;
 }
 
 .form {

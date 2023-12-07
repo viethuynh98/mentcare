@@ -114,13 +114,19 @@ class FormularyMedication_DB_Test
     public static function showPrescriptionDetails($prescriptions)
     {
         echo '<table>';
+        echo '<th>Drug Name</th>';
+        echo '<th>Unit</th>';
+        echo '<th>Dose</th>';
+        echo '<th>Frequency</th>';
+        echo '<th>Quantity</th>';
+        echo '<th>Delete</th>';
         foreach ($prescriptions as $index => $prescription) {
             echo '<tr>';
-            echo "<td>Drug Name: " . $prescription['drug_name'] . "<br>" . "</td>";
-            echo "<td>Unit: " . $prescription['unit'] . "<br>" . "</td>";
-            echo "<td>Dose: " . $prescription['dose'] . "<br>" . "</td>";
-            echo "<td> Frequency: " . $prescription['frequency'] . "<br>" . "</td>";
-            echo "<td> Quantity: " . $prescription['quantity'] . "<br>" . "</td>";
+            echo '<td>' . $prescription['drug_name'] . '</td>';
+            echo '<td>' . $prescription['unit'] . '</td>';
+            echo '<td>' . $prescription['dose'] . '</td>';
+            echo '<td>' . $prescription['frequency'] . '</td>';
+            echo '<td>' . $prescription['quantity'] . '</td>';
             echo '<td>';
             echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
             echo '<input type="hidden" name="index" value="' . $index . '">';
@@ -128,7 +134,6 @@ class FormularyMedication_DB_Test
             echo '</form>';
             echo '</td>';
             echo '</tr>';
-            echo '<tr><td colspan="6"><hr></td></tr>';
         }
         echo '</table>';
     }
