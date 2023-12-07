@@ -51,7 +51,16 @@ session_start();
 // echo "<h1>Patient Records</h1>";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $showPatientInfo = true; // Biến kiểm tra để xác định có hiển thị thông tin bệnh nhân hay không
-    $doctor_id = "DT01";
+
+    if (isset($_SESSION['email'])) {
+        $rows = $new_object->getStaffID($_SESSION['email']);
+        foreach ($rows as $row) {
+            $doctor_id = $row['staff_id'];
+        }
+    } else {
+        $doctor_id = "DT01";
+        // echo $doctor_id;
+    }
 
     if (isset($_GET['patient_id'])) {
         $patient_id = $_GET['patient_id'];
@@ -129,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 "Diagnose: " . $record['diagnose'] . "<br>" .
                 "Treatment: " . $record['treatment'] . "<br>" .
                 "</td>";
-            echo '<td><a href="?mh_id=' . $record["mh_id"] . '">Detail</a></td>';
+            echo '<td><a href="?patient_id=' . $record['patient_id'] . '&mh_id=' . $record["mh_id"] . '&doctor_id=' . $record['staff_id'] . '">Detail</a></td>';
             echo '</tr>';
         }
         echo '</table>';

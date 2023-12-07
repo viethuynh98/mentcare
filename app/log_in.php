@@ -17,10 +17,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
     $sql_check_users = "SELECT * FROM users
-    JOIN medicalstaff ON users.staff_id = medicalstaff.staff_id    
+    JOIN medicalstaff ON users.staff_id = medicalstaff.staff_id
     WHERE users.email_address = '$email' and users.password = '$password' and medicalstaff.specialty = 'Doctor' ";
     // Thực thi câu lệnh SQL
-    if (Database::db_execute($sql_check_users)) {
+    if (Database::db_get_list($sql_check_users)) {
         Helper::redirect(Helper::get_url('../mentcare/app/interface.php'));
     } else {
         Helper::redirect(Helper::get_url('../mentcare/app/log_in.php?success=5'));
