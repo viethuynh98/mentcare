@@ -4,6 +4,7 @@ session_start();
 echo "<h1>Patient Records</h1>";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
     $showPatientInfo = true; // Biến kiểm tra để xác định có hiển thị thông tin bệnh nhân hay không
+    $doctor_id = "DT01";
 
     if (isset($_GET['patient_id'])) {
         $patient_id = $_GET['patient_id'];
@@ -32,7 +33,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     echo '</tr>';
                 }
                 echo '</table>';
-                echo '<button><a href="./form_02.php">New Prescription</a></button>';
+                echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&&doctor_id=' . $doctor_id . '">New Prescription</a></button>';
                 echo '</div>';
             } else {
                 echo "No records found for the patient.";
@@ -58,7 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
             echo "Note: " . $prescription_detail['note'] . "<br>";
             echo "<hr>";
         }
-        echo '<button><a href="./form_02.php?mh_id=' . $mh_id . '">Reissue Prescription</a></button>';
+        echo '<button><a href="./form_02.php?patient_id=' . $patient_id . '&mh_id=' . $record["mh_id"] . '&doctor_id=' . $doctor_id . '">Reissue Prescription</a></button>';
         echo '</div>';
     }
 
