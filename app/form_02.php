@@ -166,39 +166,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     if ($drugNameExists) {
       $resultMessage = "<h6>Error: Drug already exists in the prescription.</h6>";
-    } else // Kiểm tra xem thuốc có trong cơ sở dữ liệu hay không
-      if ($new_object->checkDrugExistence($drug_name)) {
-        // Nếu có, ẩn form nhập tên thuốc
-        $_SESSION['showDrugNameForm'] = false;
-        $_SESSION['showDetailsForm'] = true;
-        // hien thi chi tiet thuoc de bac si tham khao:
-        $drugDetail = $new_object->getDrugDetails($drug_name);
-        // echo "asdfasdffffffffffffffffffffffffffffffffff";
-        foreach ($drugDetail as $row) {
-          $_SESSION['min_dose'] = $row['min_dose_per_use'];
-          $_SESSION['max_dose'] = $row['max_dose_per_use'];
-          $_SESSION['frequency_max'] = $row['frequency_max'];
-          $_SESSION['unit'] = $row['unit'];
-          $_SESSION['form'] = $row['form'];
-          $_SESSION['drug_id'] = $row['drug_id'];
-          $_SESSION['drug_note'] = $row['dosing_guide'];
-        }
-        if (isset($_POST['dose'])) {
-          $dose = $_POST["dose"];
-          $frequency = $_POST["frequency"];
-          $quantity = $_POST["quantity"];
-          // Gọi hàm formulary_medication và lưu kết quả
-          $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency, $quantity);
-          // Hiển thị form chi tiết và giữ nguyên các giá trị đã nhập
-          if ($resultMessage == "<h5>Your prescription is ready</h5>") {
-            // Hiển thị nút "Add Into Prescription"
-            $_SESSION['showAddIntoPrescriptionBtn'] = true;
-          }
-        }
-      } else {
-        // Nếu không, yêu cầu người dùng nhập lại
-        $resultMessage = "<h6>Drug not found. Please enter a valid drug name.</h6>";
+    } else if ($new_object->checkDrugExistence($drug_name)) {
+      $_SESSION['showDrugNameForm'] = false;
+      $_SESSION['showDetailsForm'] = true;
+      // hien thi chi tiet thuoc de bac si tham khao:
+      $drugDetail = $new_object->getDrugDetails($drug_name);
+      foreach ($drugDetail as $row) {
+        $_SESSION['min_dose'] = $row['min_dose_per_use'];
+        $_SESSION['max_dose'] = $row['max_dose_per_use'];
+        $_SESSION['frequency_max'] = $row['frequency_max'];
+        $_SESSION['unit'] = $row['unit'];
+        $_SESSION['form'] = $row['form'];
+        $_SESSION['drug_id'] = $row['drug_id'];
+        $_SESSION['drug_note'] = $row['dosing_guide'];
       }
+      if (isset($_POST['dose'])) {
+        $dose = $_POST["dose"];
+        $frequency = $_POST["frequency"];
+        $quantity = $_POST["quantity"];
+        $resultMessage = $new_object->formulary_medication($drug_name, $dose, $frequency, $quantity);
+        if ($resultMessage == "<h5>Your prescription is ready</h5>") {
+          $_SESSION['showAddIntoPrescriptionBtn'] = true;
+        }
+      }
+    } else {
+      $resultMessage = "<h6>Drug not found. Please enter a valid drug name.</h6>";
+    }
   }
 }
 ?>
@@ -213,6 +206,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <link rel="stylesheet" href="../css/form_02.css">
   <link rel="stylesheet" href="../css/style.css">
+  <link href="../image/logo.jpg" rel="icon">
   <title>Formulary Medication Form</title>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script>
@@ -222,7 +216,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
       drugNameInput.on("input", function() {
         var input = $(this).val();
-        // console.log("Input: ", input);
         if (input.length >= 1) {
           $.ajax({
             type: "POST",
@@ -258,7 +251,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-  <!-- ======= Header ======= -->
   <header id="header" class="d-flex align-items-center">
     <div class="container d-flex justify-content-between">
 
@@ -270,14 +262,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <ul>
           <li><a class="nav-link scrollto" href="./interface.php">Home</a></li>
           <li><a class="nav-link scrollto" href="./showRecords.php">Patient Record</a></li>
-          <!-- <li><a class="nav-link scrollto active" href="./form_02.php">Prescription</a></li> -->
           <li><a href="./log_out.php">Log Out</a></li>
         </ul>
-      </nav><!-- .navbar -->
+      </nav>
 
     </div>
   </header><!-- End Header -->
-  <!-- Biểu mẫu nhập liệu -->
   <div class="showDrugNameForm">
     <?php if ($_SESSION['showDrugNameForm']) : ?>
       <div class="check_drug">
@@ -293,12 +283,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
     <?php endif; ?>
 
-    <!-- Hiển thị kết quả và form chi tiết -->
     <?php if (!empty($resultMessage) || $_SESSION['showDetailsForm']) : ?>
       <?php echo $resultMessage; ?>
 
       <?php if ($_SESSION['showDetailsForm']) : ?>
-        <!-- <form method="post" action=" ./form.php"> -->
         <div class="info_drug">
           <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
             <div class="row">
@@ -367,8 +355,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </div>
     <?php endif; ?>
     <?php if ($_SESSION['show_diagnose']) : ?>
-      <!-- <div class="showDrugNameForm"> -->
-      <!-- Nút "Add Another Drug" và "Done" -->
       <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <div class="row">
           <div class="col">
@@ -393,9 +379,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       </form>
   </div>
 <?php endif; ?>
-<!-- </div> -->
-
-
 </body>
 
 </html>
