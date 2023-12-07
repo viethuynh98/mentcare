@@ -65,7 +65,6 @@ class FormularyMedication_DB_Test
         $stmt->execute([':mh_id' => "$mh_id"]);
         // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
         $result = $stmt->fetchAll();
-
         return $result;
     }
 
@@ -73,6 +72,16 @@ class FormularyMedication_DB_Test
     {
         $stmt = $this->db->prepare("SELECT * FROM medicalhistory WHERE patient_id = :patient_id");
         $stmt->execute([':patient_id' => "$patient_id"]);
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
+
+    public function getStaffID($email)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM users WHERE email_address = :email");
+        $stmt->execute([':email' => "$email"]);
         // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
         $result = $stmt->fetchAll();
 
@@ -89,7 +98,17 @@ class FormularyMedication_DB_Test
 
         return $result;
     }
-    // 
+    //
+
+    public function get_mh_detail($mh_id)
+    {
+        $stmt = $this->db->prepare("SELECT * FROM medicalhistory WHERE mh_id = :mh_id");
+        $stmt->execute([':mh_id' => "$mh_id"]);
+        // $result = $stmt->fetchAll(\PDO::FETCH_COLUMN);
+        $result = $stmt->fetchAll();
+
+        return $result;
+    }
 
 
     public static function showPrescriptionDetails($prescriptions)
@@ -114,7 +133,59 @@ class FormularyMedication_DB_Test
         echo '</table>';
     }
 
-    public function formulary_medication($drug_name, $dose, $frequency)
+    public function insert_into_db($pt_id, $dr_id, $diagnose, $treatment, $note, $prescriptions)
+    {
+        $currentDate = date("Y-m-d H:i:s");
+        $stmt = $this->db->prepare(
+            "INSERT INTO medicalHistory (`visit_date`, `diagnose`, `treatment`, `patient_id`, `staff_id`)
+            VALUES ('$currentDate', '$diagnose', '$treatment', '$pt_id', '$dr_id');
+        "
+        );
+        $stmt->execute();
+        $stmt = $this->db->prepare(
+            "INSERT INTO prescription (`mh_id`, `note`)
+             VALUES (LAST_INSERT_ID(), '$note');
+        "
+        );
+        $stmt->execute();
+        foreach ($prescriptions as $index => $prescription) {
+            $stmt = $this->db->prepare(
+                "INSERT INTO prescription_detail(dose, frequency, quantity, note, drug_id, prescription_id)
+                VALUES (:dose, :frequency, :quantity, :note, :drug_id, LAST_INSERT_ID())"
+            );
+
+            // Bind các giá trị từ mảng $prescription vào statement
+            $stmt->bindParam(':dose', $prescription['dose']);
+            $stmt->bindParam(':frequency', $prescription['frequency']);
+            $stmt->bindParam(':quantity', $prescription['quantity']);
+            $stmt->bindParam(':note', $prescription['note']);
+            $stmt->bindParam(':drug_id', $prescription['drug_id']);
+
+            // Thực thi câu lệnh SQL
+            $stmt->execute();
+        }
+        // return $result;
+    }
+
+    public static function check_integer_value($value)
+    {
+        if (is_int($value)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static function check_quantity($quantity, $dose_per_day)
+    {
+        if (($quantity % $dose_per_day) != 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function formulary_medication($drug_name, $dose, $frequency, $quantity)
     {
         // Lấy thông tin từ cơ sở dữ liệu
         $stmt = $this->db->prepare("SELECT min_dose_per_use, max_dose_per_use, frequency_max FROM drug WHERE name = ?");
@@ -128,6 +199,12 @@ class FormularyMedication_DB_Test
             $frequency_max = $row['frequency_max'];
             // $max_treatment_days = $row['max_treatment_days'];
             // $stock = $row['stock'];
+            // if (!FormularyMedication_DB_Test::check_integer_value($dose)) {
+            //     return "Please enter an integer value for the dosage";
+            // }
+            // if (!FormularyMedication_DB_Test::check_integer_value($frequency)) {
+            //     return "Please enter an integer value for the frequency";
+            // }
 
             $total_dose = $dose * $frequency;
             $max_dose_per_day = $max_dose * $frequency_max;
@@ -138,12 +215,14 @@ class FormularyMedication_DB_Test
             if ($dose > $max_dose) {
                 return "<h5>Single dose is too high.</h5>";
             }
-            // if ($quantity > $stock)
             if ($frequency <= 0) {
                 return "<h5>Frequency is too low.</h5>";
             }
             if ($frequency > $frequency_max) {
                 return "<h5>Frequency is too high.</h5>";
+            }
+            if (!FormularyMedication_DB_Test::check_quantity($quantity, $total_dose)) {
+                return "<h5>Please enter the appropriate medicine quantity.</h5>";
             }
             // không cần thiết:
             if ($total_dose > $max_dose_per_day) {
