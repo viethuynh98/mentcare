@@ -77,6 +77,32 @@ h6 {
 }
 
 .showPrescriptionDetails {
+    position: absolute;
+    top: 23vh;
+    right: 1vh;
+    margin: 0 auto;
+    width: 45vw;
+}
+
+.showPrescriptionDetails1 {
+    position: absolute;
+    top: 12vh;
+    right: 56vh;
+    width: 95vh;
+}
+
+.showPrescriptionDetails2 {
+    position: absolute;
+    top: 15vh;
+    right: 1vh;
+    margin: 0 auto;
+    width: 45vw;
+}
+
+.showPrescriptionDetails3 {
+    position: absolute;
+    top: 15vh;
+    right: 1vh;
     margin: 0 auto;
     width: 45vw;
 }
