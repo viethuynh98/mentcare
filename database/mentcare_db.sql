@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 07, 2023 at 04:11 AM
+-- Generation Time: Dec 07, 2023 at 10:47 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -44,25 +44,25 @@ CREATE TABLE `drug` (
 --
 
 INSERT INTO `drug` (`drug_id`, `name`, `indication`, `dosing_guide`, `min_dose_per_use`, `max_dose_per_use`, `frequency_max`, `unit`, `form`) VALUES
-(1, 'Triptans', 'đau đầu', 'sau ăn', 2, 3, 3, 10, 'caplet'),
-(2, 'Etodolac', 'đau đầu', 'sau ăn', 2, 3, 3, 15, 'caplet'),
-(3, 'Oxaprozin', 'đau đầu', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(4, 'Indomethacin', 'đau đầu', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(5, 'Nabumetone', 'đau đầu', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(6, 'Diclofenac', 'đau đầu', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(7, 'Berberin', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(8, 'Loperamid', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(9, 'Diphenoxylate', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(10, 'Codein', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(11, 'Diarsed', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(12, 'Racecadotril', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(13, 'Smecta', 'tiêu chảy', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(14, 'Paracetamol', 'hạ sốt', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(15, 'Aspirin', 'hạ sốt', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(16, 'Efferalgan', 'hạ sốt', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(17, 'Tiffy', 'hạ sốt', 'sau ăn', 1, 3, 2, 20, 'capsule'),
-(18, 'Panadol', 'hạ sốt', 'sau ăn', 1, 3, 2, 20, 'caplet'),
-(19, 'Glotadol', 'hạ sốt', 'sau ăn', 1, 2, 2, 20, 'capsule');
+(1, 'Citalopram', 'Depression', 'before meals', 2, 4, 3, 10, 'caplet'),
+(2, 'Paroxetine', 'Depression', 'after meals', 2, 3, 3, 15, 'caplet'),
+(3, 'Quetiapine', 'Depression', 'before meals', 1, 4, 2, 20, 'capsule'),
+(4, 'Stimulants', 'Depression', 'after meals', 1, 3, 2, 50, 'caplet'),
+(5, 'Bupropion', 'Depression', 'before meals', 1, 4, 3, 45, 'capsule'),
+(6, 'Clozaril', 'Depression', 'before meals', 1, 3, 2, 20, 'capsule'),
+(7, 'Venlafaxine', 'PTSD', 'after meals', 1, 3, 2, 70, 'caplet'),
+(8, 'Escitalopram', 'PTSD', 'after meals', 1, 4, 3, 20, 'capsule'),
+(9, 'Diphenoxylate', 'PTSD', 'after meals', 1, 3, 2, 35, 'caplet'),
+(10, 'Abilify', 'Anxiety Disorders', 'before meals', 1, 3, 2, 30, 'capsule'),
+(11, 'Sertraline', 'Anxiety Disorders', 'after meals', 1, 3, 2, 20, 'caplet'),
+(12, 'Antidepressants', 'Anxiety Disorders', 'after meals', 1, 5, 3, 55, 'capsule'),
+(13, 'Phenelzine', 'Anxiety Disorders', 'after meals', 1, 3, 2, 60, 'caplet'),
+(14, 'Buspirone', 'Bipolar Disorder', 'after meals', 1, 3, 2, 65, 'capsule'),
+(15, 'Zotepine', 'Bipolar Disorder', 'before meals', 1, 5, 2, 20, 'capsule'),
+(16, 'Fluoxetine', 'Bipolar Disorder', 'after meals', 1, 3, 3, 75, 'caplet'),
+(17, 'Benzodiazepine', 'Schizophrenia', 'after meals', 1, 3, 2, 20, 'capsule'),
+(18, 'Antipsychotics', 'Schizophrenia', 'after meals', 1, 5, 2, 85, 'caplet'),
+(19, 'Ativan', 'Schizophrenia', 'before meals', 1, 2, 3, 100, 'capsule');
 
 -- --------------------------------------------------------
 
@@ -84,16 +84,25 @@ CREATE TABLE `medicalhistory` (
 --
 
 INSERT INTO `medicalhistory` (`mh_id`, `visit_date`, `diagnose`, `treatment`, `staff_id`, `patient_id`) VALUES
-(1, '2023-02-12', 'Sốt', 'Tại Nhà', 'DT01', 1),
-(2, '2023-02-12', 'Đau Đầu', 'Tại Nhà', 'DT01', 2),
-(3, '2023-02-12', 'Tiêu Chảy', 'Tại Nhà', 'DT02', 1),
-(4, '2023-02-12', 'Sốt', 'Tại Nhà', 'DT03', 3),
-(5, '2023-02-12', 'Sốt', 'Tại Nhà', 'DT03', 4),
-(6, '2023-05-12', 'Sốt', 'Tại Nhà', 'DT01', 1),
-(7, '2023-02-12', 'Đau Đầu', 'Tại Nhà', 'DT01', 2),
-(8, '2023-02-12', 'Tiêu Chảy', 'Tại Nhà', 'DT02', 1),
-(9, '2023-02-12', 'Sốt', 'Tại Nhà', 'DT03', 3),
-(10, '2023-02-12', 'Sốt', 'Tại Nhà', 'DT03', 4);
+(1, '2023-02-12', 'Depression', 'Home', 'DT01', 1),
+(2, '2023-02-12', 'PTSD', 'Home', 'DT01', 2),
+(3, '2023-02-12', 'Anxiety Disorders', 'Home', 'DT02', 1),
+(4, '2023-02-12', 'Depression', 'Home', 'DT03', 3),
+(5, '2023-02-12', 'Depression', 'Home', 'DT03', 4),
+(6, '2023-05-12', 'Depression', 'Home', 'DT01', 1),
+(7, '2023-02-12', 'PTSD', 'Home', 'DT01', 2),
+(8, '2023-02-12', 'Anxiety Disorders', 'Home', 'DT02', 1),
+(9, '2023-02-12', 'Depression', 'Home', 'DT03', 3),
+(10, '2023-02-12', 'Depression', 'Home', 'DT03', 4),
+(17, '2023-12-07', 'Depression', 'Home', 'DT01', 3),
+(18, '2023-12-07', 'PTSD', 'Home', 'DT02', 2),
+(19, '2023-12-07', 'Depression', 'Home', 'DT01', 4),
+(20, '2023-12-07', 'Anxiety Disorders', 'Home', 'DT01', 1),
+(21, '2023-12-07', 'PTSD', 'Home', 'DT01', 3),
+(22, '2023-12-07', 'Depression', 'Home', 'DT01', 3),
+(23, '2023-12-07', 'Depression', 'Home', 'DT01', 1),
+(24, '2023-12-07', 'PTSD', 'Home', 'DT01', 3),
+(25, '2023-12-07', 'PTSD', 'Home', 'DT01', 2);
 
 -- --------------------------------------------------------
 
@@ -113,12 +122,12 @@ CREATE TABLE `medicalstaff` (
 --
 
 INSERT INTO `medicalstaff` (`staff_id`, `first_name`, `last_name`, `specialty`) VALUES
-('DT01', 'Việt', 'Huỳnh', 'Doctor'),
-('DT02', 'Việt', 'Lê', 'Doctor'),
-('DT03', 'Bảo', 'Nguyễn', 'Doctor'),
-('DT04', 'Hoàng', 'Nguyễn', 'Doctor'),
-('DT05', 'Thiệu', 'Trương', 'Doctor'),
-('NUR06', 'Hằng', 'Trần', 'Nurse');
+('DT01', 'Viet', 'Huynh', 'Doctor'),
+('DT02', 'Viet', 'Lee', 'Doctor'),
+('DT03', 'Bao', 'Nguyen', 'Doctor'),
+('DT04', 'Hoang', 'Nguyen', 'Doctor'),
+('DT05', 'Thieu', 'Truong', 'Doctor'),
+('NUR06', 'Hang', 'Tran', 'Nurse');
 
 -- --------------------------------------------------------
 
@@ -173,16 +182,25 @@ CREATE TABLE `prescription` (
 --
 
 INSERT INTO `prescription` (`prescription_id`, `mh_id`, `note`) VALUES
-(1, 1, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(2, 2, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(3, 3, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(4, 4, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(5, 5, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(6, 6, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(7, 7, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(8, 8, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(9, 9, 'không uống nước đá, không để bụng đói khi uống thuốc'),
-(10, 10, 'không uống nước đá, không để bụng đói khi uống thuốc');
+(1, 1, 'Avoid going to crowded places'),
+(2, 2, 'Avoid going to crowded places'),
+(3, 3, 'Avoid going to crowded places'),
+(4, 4, 'Avoid going to crowded places'),
+(5, 5, 'Avoid going to crowded places'),
+(6, 6, 'Avoid going to crowded places'),
+(7, 7, 'Avoid going to crowded places'),
+(8, 8, 'Avoid going to crowded places'),
+(9, 9, 'Avoid going to crowded places'),
+(10, 10, 'Avoid going to crowded places'),
+(12, 17, 'Do not come into contact with weapons'),
+(13, 18, 'Do not come into contact with weapons'),
+(14, 19, 'Do not come into contact with weapons'),
+(15, 20, 'Do not come into contact with weapons'),
+(16, 21, 'Do not come into contact with weapons'),
+(17, 22, ''),
+(18, 23, ''),
+(19, 24, 'Take care of yourself'),
+(20, 25, '');
 
 -- --------------------------------------------------------
 
@@ -204,16 +222,35 @@ CREATE TABLE `prescription_detail` (
 --
 
 INSERT INTO `prescription_detail` (`dose`, `frequency`, `quantity`, `note`, `drug_id`, `prescription_id`) VALUES
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 14, 1),
-(2, 2, 6, 'Sáng 2 viên, Chiều 2 viên, sau ăn', 1, 2),
-(2, 2, 12, 'Sáng 2 viên, Chiều 2 viên, sau ăn', 7, 3),
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 15, 4),
-(2, 3, 18, 'Sáng 2 viên, Trưa 2 viên, Chiều 2 viên, sau ăn', 16, 5),
-(2, 1, 6, 'Sáng 2 viên, sau ăn', 17, 6),
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 5, 7),
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 8, 8),
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 15, 9),
-(1, 2, 6, 'Sáng 1 viên, Chiều 1 viên, sau ăn', 19, 10);
+(1, 2, 6, 'take 1 each time, twice a day, after eating', 14, 1),
+(2, 2, 6, 'take 2 each time, twice a day, before meals', 1, 2),
+(2, 2, 12, 'take 2 each time, twice a day, after eating', 7, 3),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 15, 4),
+(2, 3, 18, 'take 2 each time, 3 times a day, after eating', 16, 5),
+(2, 1, 6, 'take 2 each time, once daily, after eating', 17, 6),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 5, 7),
+(1, 2, 6, 'take 1 each time, twice a day, after eating', 8, 8),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 15, 9),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 19, 10),
+(3, 3, 27, 'take 3 each time, 3 times a day, before meals', 1, 12),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 15, 12),
+(3, 3, 27, 'take 3 each time, 3 times a day, before meals', 1, 13),
+(3, 3, 18, 'take 3 each time, 3 times a day, after eating', 2, 13),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 5, 13),
+(3, 3, 27, 'take 3 each time, 3 times a day, before meals', 1, 14),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 19, 14),
+(3, 2, 18, 'take 3 each time, twice a day, after eating', 2, 15),
+(1, 2, 6, 'take 1 each time, twice a day, after eating', 8, 15),
+(3, 2, 6, 'take 3 each time, twice a day, before meals', 1, 16),
+(3, 3, 18, 'take 3 each time, 3 times a day, after eating', 2, 16),
+(4, 3, 12, 'take 4 each time, 3 times a day, before meals', 1, 17),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 15, 17),
+(1, 2, 6, 'take 1 each time, twice a day, after eating', 14, 18),
+(2, 3, 12, 'take 2 each time, 3 times a day, before meals', 1, 19),
+(3, 3, 18, 'take 3 each time, 3 times a day, after meals', 2, 19),
+(4, 3, 24, 'take 4 each time, 3 times a day, before meals', 1, 20),
+(3, 3, 18, 'take 3 each time, 3 times a day, after meals', 2, 20),
+(1, 2, 6, 'take 1 each time, twice a day, before meals', 5, 20);
 
 -- --------------------------------------------------------
 
@@ -306,7 +343,7 @@ ALTER TABLE `drug`
 -- AUTO_INCREMENT for table `medicalhistory`
 --
 ALTER TABLE `medicalhistory`
-  MODIFY `mh_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `mh_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `patient`
@@ -318,7 +355,7 @@ ALTER TABLE `patient`
 -- AUTO_INCREMENT for table `prescription`
 --
 ALTER TABLE `prescription`
-  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `prescription_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
