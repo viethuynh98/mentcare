@@ -12,7 +12,7 @@ td {
     border: 1px solid black;
     border-radius: 20px;
     border-collapse: collapse;
-    padding: 5px;
+    /* padding: 5px; */
     text-align: center;
     margin: auto;
 }
@@ -125,6 +125,16 @@ h6 {
 
 .showPrescriptionDetails2 table {
     width: 100%;
+}
+.delete{
+    margin-top: 2vh;
+    padding: 0;
+    width: 5vw;
+    border: 1px solid rgb(236, 227, 227);
+    border-radius: 10px;
+}
+.delete:focus{
+    border: 2px solid rgb(160, 199, 212);
 }
 
 #btn1 {

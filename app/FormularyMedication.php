@@ -130,7 +130,9 @@ class FormularyMedication_DB_Test
             echo '<td>';
             echo '<form method="post" action="' . htmlspecialchars($_SERVER["PHP_SELF"]) . '">';
             echo '<input type="hidden" name="index" value="' . $index . '">';
-            echo '<input type="submit" name="delete" value="Delete">';
+            // echo '<input type="submit" name="delete" value="Delete">';
+            echo '<button class = "delete" type="submit" name="delete" value="Delete">Delete</button>';
+            // <button type="submit" class="btn btn-default" value="add_another_drug">Add</button>';
             echo '</form>';
             echo '</td>';
             echo '</tr>';
