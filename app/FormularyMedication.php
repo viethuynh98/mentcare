@@ -43,7 +43,7 @@ class FormularyMedication_DB_Test
     public function getDrugSuggestions($input)
     {
         $stmt = $this->db->prepare("SELECT name FROM drug WHERE name LIKE :input LIMIT 5");
-        $stmt->execute([':input' => "%$input%"]);
+        $stmt->execute([':input' => "$input%"]);
         $suggestions = $stmt->fetchAll(\PDO::FETCH_COLUMN);
 
         return $suggestions;
@@ -197,14 +197,6 @@ class FormularyMedication_DB_Test
             $min_dose = $row['min_dose_per_use'];
             $max_dose = $row['max_dose_per_use'];
             $frequency_max = $row['frequency_max'];
-            // $max_treatment_days = $row['max_treatment_days'];
-            // $stock = $row['stock'];
-            // if (!FormularyMedication_DB_Test::check_integer_value($dose)) {
-            //     return "Please enter an integer value for the dosage";
-            // }
-            // if (!FormularyMedication_DB_Test::check_integer_value($frequency)) {
-            //     return "Please enter an integer value for the frequency";
-            // }
 
             $total_dose = $dose * $frequency;
             $max_dose_per_day = $max_dose * $frequency_max;
