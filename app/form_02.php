@@ -391,7 +391,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       <div class="note">
         <h4>Note for Patient</h4>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-          <textarea name="note" id="" style="width:100vh; height:6vh;"></textarea>
+          <textarea name="note" id="" style="width:48vw; height:6vh;"></textarea>
           <div id="btn1" class="col-sm-offset-2 col-sm-10">
             <button type="submit" class="btn btn-default" value="print">Print</button>
           </div>

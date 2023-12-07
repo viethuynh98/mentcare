@@ -3,9 +3,6 @@ session_start();
 ?>
 <?php
 include('libs/helper.php');
-if (!$_SESSION['email']) {
-    Helper::redirect(Helper::get_url('../mentcare/app/log_in.php'));
-}
 Database::db_connect();
 $email = $_SESSION['email'];
 $sql_select_name = "SELECT last_name FROM medicalstaff
