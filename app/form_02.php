@@ -2,7 +2,6 @@
 include('FormularyMedication.php');
 session_start();
 $resultMessage = "";
-echo "<h1>Prescription</h1>";
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
   session_destroy();
   session_start();
@@ -62,6 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo $_SESSION['patient_id'];
     echo $_SESSION['doctor_id'];
     session_destroy();
+    session_start();
   } else if (isset($_POST["add_another_drug"])) {
     $_SESSION['showDrugNameForm'] = true;
     $_SESSION['showAnotherDrugBtn'] = false;
@@ -142,7 +142,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
   }
 }
-
+$email = $_SESSION['email'];
+echo $email;
 ?>
 
 <!DOCTYPE html>
@@ -153,12 +154,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="../CSS/form_02.css">
+  <link rel="stylesheet" href="../css/form_02.css">
+  <link rel="stylesheet" href="../css/style.css">
   <title>Formulary Medication Form</title>
-
-
-
-  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
   <script>
     $(document).ready(function() {
@@ -203,6 +201,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
+  <!-- ======= Header ======= -->
+  <header id="header" class="d-flex align-items-center">
+    <div class="container d-flex justify-content-between">
+
+      <div id="logo">
+        <h1><a href="">Mental Health<span>Care</span></a></h1>
+      </div>
+
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto" href="./interface.php">Home</a></li>
+          <li><a class="nav-link scrollto" href="./showRecords.php">Patient Record</a></li>
+          <!-- <li><a class="nav-link scrollto active" href="./form_02.php">Prescription</a></li> -->
+          <li><a href="./log_out.php">Log Out</a></li>
+        </ul>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
   <!-- Biểu mẫu nhập liệu -->
   <div class="showDrugNameForm">
     <?php if ($_SESSION['showDrugNameForm']) : ?>
