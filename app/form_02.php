@@ -12,7 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
   $_SESSION['showAddIntoPrescriptionBtn'] = false;
   $_SESSION['showAnotherDrugBtn'] = false;
   $_SESSION['prevent_page_load'] = true;
+  $_SESSION['show_notes'] = true;
   // echo "asdasdasdsadasd";
+  $_SESSION['patient_id'] = $_GET["patient_id"];
+  $_SESSION['doctor_id'] = $_GET["doctor_id"];
+  echo $_SESSION['patient_id'];
+  echo $_SESSION['doctor_id'];
   if (isset($_GET["mh_id"])) {
     $mh_id = $_GET["mh_id"];
     $prescription_details = $new_object->getPrescriptionDetails($mh_id);
@@ -38,6 +43,7 @@ if (!isset($_SESSION['prescriptionValues'])) {
   $_SESSION['showAnotherDrugBtn'] = false;
   $_SESSION['prevent_page_load'] = true;
   $_SESSION['prescriptionValues'] = [];
+  $_SESSION['show_notes'] = true;
   // echo "fdsfdsfdsfdfdsfdsfdsfd";
 }
 // Kiểm tra xem biểu mẫu đã được gửi đi hay chưa
@@ -53,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     echo '</div>';
   }
   if (isset($_POST["Done"])) {
+    echo $_SESSION['patient_id'];
+    echo $_SESSION['doctor_id'];
     session_destroy();
   } else if (isset($_POST["add_another_drug"])) {
     $_SESSION['showDrugNameForm'] = true;
@@ -289,6 +297,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div id="btn1" class="col-sm-offset-2 col-sm-10">
           <button type="submit" class="btn btn-default" value="Done">Done</button>
         </div>
+      </form>
+    </div>
+  <?php endif; ?>
+  <?php if ($_SESSION['show_notes']) : ?>
+    <div class="form">
+      <!-- Nút "Add Another Drug" và "Done" -->
+      <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <textarea name="note" id="" cols="30" rows="5"></textarea>
       </form>
     </div>
   <?php endif; ?>
