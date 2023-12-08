@@ -339,7 +339,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <input type="hidden" name="drug_id" value="<?php echo $_SESSION['drug_id']; ?>">
         <input type="hidden" name="drug_note" value="<?php echo $_SESSION['drug_note']; ?>">
         <div id="btn" class="col-sm-offset-2 col-sm-10">
-          <button type="submit" class="btn btn-default" name="add_into_prescription">Add_Into_Prescription</button>
+          <button type="submit" class="btn btn-default" name="add_into_prescription">Add</button>
         </div>
       </form>
     <?php endif; ?>
